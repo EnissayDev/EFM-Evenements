@@ -38,7 +38,7 @@ public final class DBConnection {
     public static void shutdown() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            dataSource = null; // ← allow re-init (important for tests)
+            dataSource = null;
         }
     }
 
