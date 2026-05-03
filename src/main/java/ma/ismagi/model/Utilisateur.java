@@ -1,12 +1,26 @@
 package ma.ismagi.model;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Getter @Builder
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Utilisateur {
 
+    @Column
     private int id;
-    private String nom, prenom, email, passwordHash;
+    @Column
+    private String nom;
+    @Column
+    private String prenom;
+    @Column
+    private String email;
+    @Column("password_hash")
+    private String passwordHash;
+    @Column
     private Role role;
 }

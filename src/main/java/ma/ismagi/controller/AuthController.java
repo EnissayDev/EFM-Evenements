@@ -1,4 +1,63 @@
 package ma.ismagi.controller;
 
-public class AuthController {
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import ma.ismagi.dao.UtilisateurDAO;
+import ma.ismagi.model.Utilisateur;
+import ma.ismagi.utils.PasswordUtils;
+
+import java.io.IOException;
+
+@WebServlet("/AuthController")
+public class AuthController extends HttpServlet {
+
+    private UtilisateurDAO dao;
+
+    @Override
+    public void init() {
+        dao = new UtilisateurDAO();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+
+        Utilisateur utilisateur = dao.findByEmail(email);
+
+        if (utilisateur != null && PasswordUtils.verify(password, utilisateur.getPasswordHash())) {
+            HttpSession session = req.getSession();
+            session.setAttribute("utilisateur", utilisateur);
+            session.setAttribute("role", utilisateur.getRole().name());
+
+            switch (utilisateur.getRole()) {
+                case ADMIN -> resp.sendRedirect(req.getContextPath() + "/admin/dashboard.jsp");
+                case ORGANISATEUR -> resp.sendRedirect(req.getContextPath() + "/organisateur/dashboard.jsp");
+                default -> resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            }
+
+        } else {
+            req.setAttribute("erreurMessage", "Email ou mot de passe incorrect.");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        String action = req.getParameter("action");
+        if ("logout".equals(action)) {
+            req.getSession().invalidate();
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+        }
+    }
 }

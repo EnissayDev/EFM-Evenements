@@ -3,6 +3,7 @@ package ma.ismagi.dao;
 import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 import ma.ismagi.utils.DBConnection;
+import ma.ismagi.utils.SchemaInitializer;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -23,21 +24,7 @@ class UtilisateurDAOTest {
         System.setProperty("DB_PASSWORD", "");
         System.setProperty("DB_DRIVER", "org.h2.Driver");
 
-        try (Connection con = DBConnection.getConnection();
-             Statement st = con.createStatement()) {
-            st.execute("""
-            CREATE TABLE IF NOT EXISTS utilisateur (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nom VARCHAR(100) NOT NULL,
-                prenom VARCHAR(100) NOT NULL,
-                email VARCHAR(150) NOT NULL UNIQUE,
-                password_hash VARCHAR(255) NOT NULL,
-                role VARCHAR(30) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """);
-        }
+        SchemaInitializer.init();
 
         dao = new UtilisateurDAO();
     }

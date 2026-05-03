@@ -1,6 +1,9 @@
 package ma.ismagi.dao;
 
+import ma.ismagi.model.Column;
 import ma.ismagi.utils.DBConnection;
+
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,11 +13,69 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
 
     protected abstract String tableName();
     protected abstract String idColumn();
-    protected abstract T mapRow(ResultSet rs) throws SQLException;
-    protected abstract LinkedHashMap<String, Object> insertValues(T entity);
-    protected abstract LinkedHashMap<String, Object> updateValues(T entity);
-    protected abstract ID getId(T entity);
+    protected abstract Class<T> entityClass();
 
+    protected T mapRow(ResultSet rs) throws SQLException {
+        try {
+            T entity = entityClass().getDeclaredConstructor().newInstance();
+            for (Field field : entityClass().getDeclaredFields()) {
+                if (!field.isAnnotationPresent(Column.class)) continue;
+                String col = getColumnName(field);
+                field.setAccessible(true);
+                Object value = rs.getObject(col);
+                if (field.getType().isEnum() && value != null) {
+                    value = Enum.valueOf((Class<Enum>) field.getType(), value.toString());
+                }
+                field.set(entity, value);
+            }
+            return entity;
+        } catch (Exception e) {
+            throw new SQLException("Error mapping row to " + entityClass().getSimpleName(), e);
+        }
+    }
+
+    protected LinkedHashMap<String, Object> insertValues(T entity) {
+        return columnValues(entity);
+    }
+
+    protected LinkedHashMap<String, Object> updateValues(T entity) {
+        return columnValues(entity);
+    }
+
+    protected ID getId(T entity) {
+        try {
+            for (Field field : entityClass().getDeclaredFields()) {
+                if (!field.isAnnotationPresent(Column.class)) continue;
+                String col = getColumnName(field);
+                if (col.equals(idColumn())) {
+                    field.setAccessible(true);
+                    return (ID) field.get(entity);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting id from " + entityClass().getSimpleName(), e);
+        }
+        return null;
+    }
+
+    private LinkedHashMap<String, Object> columnValues(T entity) {
+        LinkedHashMap<String, Object> values = new LinkedHashMap<>();
+        try {
+            for (Field field : entityClass().getDeclaredFields()) {
+                if (!field.isAnnotationPresent(Column.class)) continue;
+                String col = getColumnName(field);
+                if (col.equals(idColumn())) continue; // skip id on insert/update
+                field.setAccessible(true);
+                Object value = field.get(entity);
+                values.put(col, value instanceof Enum ? ((Enum<?>) value).name() : value);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading fields from " + entityClass().getSimpleName(), e);
+        }
+        return values;
+    }
+
+    @Override
     public void create(T entity) {
         LinkedHashMap<String, Object> values = insertValues(entity);
 
@@ -49,6 +110,7 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         }
     }
 
+    @Override
     public T findById(ID id) {
         String sql = "SELECT * FROM " + tableName() + " WHERE " + idColumn() + " = ?";
 
@@ -70,6 +132,7 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         return null;
     }
 
+    @Override
     public List<T> findAll() {
         List<T> list = new ArrayList<>();
         String sql = "SELECT * FROM " + tableName();
@@ -89,6 +152,7 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         return list;
     }
 
+    @Override
     public void update(T entity) {
         LinkedHashMap<String, Object> values = updateValues(entity);
 
@@ -123,6 +187,7 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         }
     }
 
+    @Override
     public void delete(ID id) {
         String sql = "DELETE FROM " + tableName() + " WHERE " + idColumn() + " = ?";
 
@@ -135,5 +200,10 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         } catch (SQLException e) {
             throw new RuntimeException("Error while deleting entity from " + tableName(), e);
         }
+    }
+
+    private String getColumnName(Field field) {
+        String col = field.getAnnotation(Column.class).value();
+        return col.isEmpty() ? field.getName() : col;
     }
 }
