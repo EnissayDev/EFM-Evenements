@@ -5,17 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Espace Organisateur - EventTix</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 40px;
-        }
-        @media (max-width: 768px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -23,7 +16,7 @@
         <div class="container header-content">
             <a href="#" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
             <nav>
-                <a href="login.jsp" class="btn btn-outline">Déconnexion</a>
+                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Déconnexion</a>
             </nav>
         </div>
     </header>
@@ -31,7 +24,8 @@
     <div class="container dashboard-grid">
         <div class="card">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Créer un Nouvel Événement</h2>
-            <form action="EvenementController" method="POST">
+            <!-- Fixed Path: Routes to ma.ismagi.controller.EvenementController -->
+            <form action="${pageContext.request.contextPath}/EvenementController" method="POST">
                 <input type="hidden" name="action" value="create">
                 <div class="form-group">
                     <label for="titre">Titre de l'événement</label>

@@ -6,7 +6,8 @@ document.getElementById('btnScan').addEventListener('click', function() {
         return;
     }
 
-    fetch('ValidationController', {
+    // Fixed Path: Uses dynamic route to ma.ismagi.controller.ValidationController
+    fetch(APP_CONTEXT_PATH + '/ValidationController', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

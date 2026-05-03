@@ -4,31 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Paiement - EventTix</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-        .checkout-wrapper {
-            max-width: 600px;
-            margin: 60px auto;
-        }
-        .order-summary {
-            background: var(--bg-light);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border-color);
-        }
+        .checkout-wrapper { max-width: 600px; margin: 60px auto; }
+        .order-summary { background: var(--bg-light); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid var(--border-color); }
     </style>
 </head>
 <body>
     <header>
         <div class="container header-content">
-            <a href="catalogue.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/catalogue.jsp" class="logo">EventTix</a>
         </div>
     </header>
 
     <div class="container checkout-wrapper">
         <h1 style="text-align: center; margin-bottom: 40px;">Paiement Sécurisé</h1>
-
         <div class="order-summary">
             <h3 style="margin-top: 0;">Résumé de la commande</h3>
             <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700;">
@@ -36,17 +26,15 @@
                 <span>${montant} MAD</span>
             </div>
         </div>
-
         <div class="card">
-            <form action="CommandeController" method="POST">
+            <!-- Fixed Path: Routes to ma.ismagi.controller.CommandeController -->
+            <form action="${pageContext.request.contextPath}/CommandeController" method="POST">
                 <input type="hidden" name="idEvenement" value="${idEvenement}">
                 <input type="hidden" name="place" value="${placeChoisie}">
-
                 <div class="form-group">
                     <label for="cardNumber">Numéro de carte</label>
                     <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" required>
                 </div>
-
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
                         <label for="expiry">Date d'expiration</label>
@@ -57,7 +45,6 @@
                         <input type="text" id="cvv" name="cvv" placeholder="123" required>
                     </div>
                 </div>
-
                 <button type="submit" class="btn" style="width: 100%; font-size: 16px; padding: 16px;">Payer ${montant} MAD</button>
             </form>
             <p style="color: red; margin-top: 15px; text-align: center;">${erreurPaiement}</p>

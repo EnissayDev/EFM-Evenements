@@ -4,32 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Connexion - EventTix</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-        }
+        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+        .login-card { width: 100%; max-width: 400px; padding: 40px; }
     </style>
 </head>
 <body>
     <header>
         <div class="container header-content">
-            <a href="catalogue.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/index.jsp" class="logo">EventTix</a>
         </div>
     </header>
 
     <div class="container login-wrapper">
         <div class="card login-card">
             <h2 style="margin-top: 0; font-size: 28px;">Connectez-vous</h2>
-            <form action="AuthController" method="POST">
+            <!-- Fixed Path: Routes to ma.ismagi.controller.AuthController -->
+            <form action="${pageContext.request.contextPath}/AuthController" method="POST">
                 <div class="form-group">
                     <label for="email">Adresse e-mail</label>
                     <input type="email" id="email" name="email" required>
@@ -38,7 +30,6 @@
                     <label for="password">Mot de passe</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <!-- Full width button for primary actions -->
                 <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Se connecter</button>
             </form>
             <p style="color: red; margin-top: 15px; text-align: center;">${erreurMessage}</p>

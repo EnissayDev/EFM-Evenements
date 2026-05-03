@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>EventTix - La meilleure billetterie en ligne</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Use dynamic path for CSS to prevent broken styles -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
         .hero-home {
             background-image: linear-gradient(rgba(30, 10, 60, 0.8), rgba(30, 10, 60, 0.8)), url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
@@ -34,9 +35,9 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="index.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/index.jsp" class="logo">EventTix</a>
             <nav>
-                <a href="login.jsp" class="btn btn-outline">Connexion</a>
+                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
             </nav>
         </div>
     </header>
@@ -45,9 +46,9 @@
         <div class="hero-content">
             <h1>Vos prochains meilleurs souvenirs commencent ici.</h1>
             <p>Découvrez des concerts, des conférences et des événements exclusifs près de chez vous.</p>
-            <form action="EvenementController" method="GET">
+            <!-- Fixed Path: Route dynamically to the controller -->
+            <form action="${pageContext.request.contextPath}/EvenementController" method="GET">
                 <input type="hidden" name="action" value="listAll">
-                <!-- Directs the user to the catalog -->
                 <button type="submit" class="btn" style="font-size: 18px; padding: 15px 40px;">Parcourir les événements</button>
             </form>
         </div>
