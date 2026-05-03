@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public abstract class JdbcDao<T, ID> {
+public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
 
     protected abstract String tableName();
     protected abstract String idColumn();
