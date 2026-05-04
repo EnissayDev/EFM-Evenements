@@ -112,12 +112,17 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
 
     @Override
     public T findById(ID id) {
-        String sql = "SELECT * FROM " + tableName() + " WHERE " + idColumn() + " = ?";
+        return findByAttribute(idColumn(), id);
+    }
+
+    @Override
+    public T findByAttribute(String attributeName, Object value) {
+        String sql = "SELECT * FROM " + tableName() + " WHERE " + attributeName + " = ?";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setObject(1, id);
+            ps.setObject(1, value);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -133,9 +138,9 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
     }
 
     @Override
-    public List<T> findAll() {
+    public List<T> findAll(int limit) {
         List<T> list = new ArrayList<>();
-        String sql = "SELECT * FROM " + tableName();
+        String sql = "SELECT * FROM " + tableName() + (limit > 0 ? " LIMIT " + limit : "");
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -150,6 +155,11 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
         }
 
         return list;
+    }
+
+    @Override
+    public List<T> findAll() {
+        return findAll(-1);
     }
 
     @Override

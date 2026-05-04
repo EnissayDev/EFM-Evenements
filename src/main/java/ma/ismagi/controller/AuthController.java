@@ -29,7 +29,7 @@ public class AuthController extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        Utilisateur utilisateur = dao.findByEmail(email);
+        Utilisateur utilisateur = dao.findByAttribute("email", email);
 
         if (utilisateur != null && PasswordUtils.verify(password, utilisateur.getPasswordHash())) {
             HttpSession session = req.getSession();

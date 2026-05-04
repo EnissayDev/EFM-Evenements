@@ -84,7 +84,7 @@ class UtilisateurDAOTest {
         dao.create(makeUser("user1@example.com"));
         dao.create(makeUser("user2@example.com"));
         dao.create(makeUser("user3@example.com"));
-        List<Utilisateur> all = dao.findAll();
+        List<Utilisateur> all = dao.findAll(3);
         assertEquals(3, all.size());
 
         System.out.println("testFindAll passed -- " + all.size() + " utilisateurs found:");
