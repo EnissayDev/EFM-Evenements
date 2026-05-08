@@ -55,7 +55,9 @@ public class EvenementController extends HttpServlet {
                 return;
             }
             Evenement evenement = evenementDAO.findById(Integer.parseInt(idParam));
+            int billetsSold = commandeDAO.countBilletsByEvenement(evenement.getId());
             req.setAttribute("evenement", evenement);
+            req.setAttribute("billetsSold", billetsSold);
             req.getRequestDispatcher("/detail-evenement.jsp").forward(req, resp);
             return;
         }
@@ -72,6 +74,10 @@ public class EvenementController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
 
         String action = req.getParameter("action");
 

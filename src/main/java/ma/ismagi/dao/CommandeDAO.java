@@ -50,6 +50,20 @@ public class CommandeDAO extends JdbcDao<Commande, Integer> {
         throw new RuntimeException("No generated key returned for commande");
     }
 
+    public int countBilletsByEvenement(int evenementId) {
+        String sql = "SELECT COALESCE(SUM(quantite), 0) FROM commande WHERE evenement_id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, evenementId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error counting billets for evenement " + evenementId, e);
+        }
+        return 0;
+    }
+
     public List<Commande> findByOrganisateur(int organisateurId) {
         List<Commande> commandes = new ArrayList<>();
 

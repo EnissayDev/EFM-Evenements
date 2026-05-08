@@ -8,8 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import ma.ismagi.dao.BilletDAO;
 import ma.ismagi.dao.CommandeDAO;
+import ma.ismagi.dao.EvenementDAO;
 import ma.ismagi.model.Billet;
 import ma.ismagi.model.Commande;
+import ma.ismagi.model.Evenement;
 import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 
@@ -22,13 +24,15 @@ public class CommandeController extends HttpServlet {
     private static final int PRIX_STANDARD = 150;
     private static final int PRIX_VIP      = 300;
 
-    private CommandeDAO commandeDAO;
-    private BilletDAO   billetDAO;
+    private CommandeDAO  commandeDAO;
+    private BilletDAO    billetDAO;
+    private EvenementDAO evenementDAO;
 
     @Override
     public void init() {
-        commandeDAO = new CommandeDAO();
-        billetDAO   = new BilletDAO();
+        commandeDAO  = new CommandeDAO();
+        billetDAO    = new BilletDAO();
+        evenementDAO = new EvenementDAO();
     }
 
     /** GET: calculate total and forward to paiement.jsp */
@@ -54,12 +58,21 @@ public class CommandeController extends HttpServlet {
         String typePlace   = req.getParameter("typePlace");
         String quantiteStr = req.getParameter("quantite");
 
-        int quantite;
+        int quantite, idEvenementInt;
         try {
+            idEvenementInt = Integer.parseInt(idEvenement);
             quantite = Integer.parseInt(quantiteStr);
             if (quantite < 1) throw new NumberFormatException();
         } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/evenements?action=listAll");
+            return;
+        }
+
+
+        Evenement evenement = evenementDAO.findById(idEvenementInt);
+        int sold = commandeDAO.countBilletsByEvenement(idEvenementInt);
+        if (sold + quantite > evenement.getCapacite()) {
+            resp.sendRedirect(req.getContextPath() + "/evenements?id=" + idEvenement + "&error=complet");
             return;
         }
 
@@ -94,6 +107,13 @@ public class CommandeController extends HttpServlet {
             montant     = Double.parseDouble(req.getParameter("montant"));
         } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/evenements?action=listAll");
+            return;
+        }
+
+        Evenement evenement = evenementDAO.findById(idEvenement);
+        int sold = commandeDAO.countBilletsByEvenement(idEvenement);
+        if (sold + quantite > evenement.getCapacite()) {
+            resp.sendRedirect(req.getContextPath() + "/evenements?id=" + idEvenement + "&error=complet");
             return;
         }
 

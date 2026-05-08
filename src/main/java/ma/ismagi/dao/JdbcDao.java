@@ -32,6 +32,12 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
                         value = ((Timestamp) value).toLocalDateTime();
                     } else if (field.getType().isEnum()) {
                         value = Enum.valueOf((Class<Enum>) field.getType(), value.toString());
+                    } else if (value instanceof Number n) {
+                        Class<?> t = field.getType();
+                        if      (t == double.class || t == Double.class)  value = n.doubleValue();
+                        else if (t == float.class  || t == Float.class)   value = n.floatValue();
+                        else if (t == int.class    || t == Integer.class) value = n.intValue();
+                        else if (t == long.class   || t == Long.class)    value = n.longValue();
                     }
                 }
                 field.set(entity, value);

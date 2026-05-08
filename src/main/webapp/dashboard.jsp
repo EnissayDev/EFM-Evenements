@@ -33,8 +33,10 @@
     <div class="dashboard-grid">
         <div class="card">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Créer un Nouvel Événement</h2>
-            <form action="${pageContext.request.contextPath}/evenements" method="POST">
-                <input type="hidden" name="action" value="create">
+            <form action="${pageContext.request.contextPath}/evenements"
+                  method="POST"
+                  accept-charset="UTF-8">
+                      <input type="hidden" name="action" value="create">
                 <div class="form-group">
                     <label for="titre">Titre de l'événement</label>
                     <input type="text" id="titre" name="titre" required>

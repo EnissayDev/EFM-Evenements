@@ -18,7 +18,7 @@ public enum Role {
     ),
     ADMIN(
             List.of("/admin-dashboard.jsp", "/dashboard.jsp"),
-            "/admin-dashboard.jsp"
+            "/admin"
     );
 
     private final List<String> allowedPages;
