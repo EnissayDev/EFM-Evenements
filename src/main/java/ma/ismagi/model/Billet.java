@@ -19,4 +19,7 @@ public class Billet {
 
     @Column
     private String code;
+
+    @Column
+    private String statut; // ACTIF | VALIDE
 }

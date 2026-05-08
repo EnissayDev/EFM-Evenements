@@ -33,7 +33,7 @@
     <div class="dashboard-grid">
         <div class="card">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Créer un Nouvel Événement</h2>
-            <form action="${pageContext.request.contextPath}/EvenementController" method="POST">
+            <form action="${pageContext.request.contextPath}/evenements" method="POST">
                 <input type="hidden" name="action" value="create">
                 <div class="form-group">
                     <label for="titre">Titre de l'événement</label>
@@ -52,6 +52,10 @@
                 <div class="form-group">
                     <label for="lieu">Lieu complet</label>
                     <input type="text" id="lieu" name="lieu" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" style="width:100%;resize:vertical;"></textarea>
                 </div>
                 <button type="submit" class="btn">Publier l'événement</button>
             </form>

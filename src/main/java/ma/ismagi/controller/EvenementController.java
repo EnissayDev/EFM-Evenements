@@ -10,13 +10,14 @@ import ma.ismagi.dao.CommandeDAO;
 import ma.ismagi.dao.EvenementDAO;
 import ma.ismagi.model.Commande;
 import ma.ismagi.model.Evenement;
+import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet("/EvenementController")
+@WebServlet("/evenements")
 public class EvenementController extends HttpServlet {
 
     private EvenementDAO evenementDAO;
@@ -31,6 +32,33 @@ public class EvenementController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        String action  = req.getParameter("action");
+        String idParam = req.getParameter("id");
+
+        if ("listAll".equals(action)) {
+            List<Evenement> evenements = evenementDAO.findAll();
+            req.setAttribute("evenements", evenements);
+            req.getRequestDispatcher("/catalogue.jsp").forward(req, resp);
+            return;
+        }
+
+        if (idParam != null) {
+            HttpSession session = req.getSession(false);
+            if (session == null || session.getAttribute("utilisateur") == null) {
+                resp.sendRedirect(req.getContextPath() + "/login.jsp");
+                return;
+            }
+            Utilisateur viewer = (Utilisateur) session.getAttribute("utilisateur");
+            if (viewer.getRole() == Role.AGENT_CONTROLE) {
+                resp.sendRedirect(req.getContextPath() + Role.AGENT_CONTROLE.getDefaultRedirect());
+                return;
+            }
+            Evenement evenement = evenementDAO.findById(Integer.parseInt(idParam));
+            req.setAttribute("evenement", evenement);
+            req.getRequestDispatcher("/detail-evenement.jsp").forward(req, resp);
+            return;
+        }
 
         Utilisateur organisateur = getOrganisateur(req, resp);
         if (organisateur == null) return;
@@ -60,10 +88,11 @@ public class EvenementController extends HttpServlet {
         Utilisateur organisateur = getOrganisateur(req, resp);
         if (organisateur == null) return;
 
-        String titre   = req.getParameter("titre");
-        String dateStr = req.getParameter("date");
-        String capStr  = req.getParameter("capacite");
-        String lieu    = req.getParameter("lieu");
+        String titre       = req.getParameter("titre");
+        String description = req.getParameter("description");
+        String dateStr     = req.getParameter("date");
+        String capStr      = req.getParameter("capacite");
+        String lieu        = req.getParameter("lieu");
 
         if (titre == null || titre.isBlank()
                 || dateStr == null || dateStr.isBlank()
@@ -96,6 +125,7 @@ public class EvenementController extends HttpServlet {
 
         Evenement evenement = Evenement.builder()
                 .titre(titre)
+                .description(description)
                 .date(date)
                 .capacite(capacite)
                 .lieu(lieu)
@@ -105,7 +135,7 @@ public class EvenementController extends HttpServlet {
         evenementDAO.create(evenement);
 
         // PRG — prevents duplicate submission on refresh
-        resp.sendRedirect(req.getContextPath() + "/EvenementController?success=created");
+        resp.sendRedirect(req.getContextPath() + "/evenements?success=created");
     }
 
     private Utilisateur getOrganisateur(HttpServletRequest req, HttpServletResponse resp)
@@ -116,6 +146,11 @@ public class EvenementController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login.jsp");
             return null;
         }
-        return (Utilisateur) session.getAttribute("utilisateur");
+        Utilisateur u = (Utilisateur) session.getAttribute("utilisateur");
+        if (u.getRole() != Role.ORGANISATEUR && u.getRole() != Role.ADMIN) {
+            resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
+            return null;
+        }
+        return u;
     }
 }

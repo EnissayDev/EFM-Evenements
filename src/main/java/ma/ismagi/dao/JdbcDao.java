@@ -5,6 +5,8 @@ import ma.ismagi.utils.DBConnection;
 
 import java.lang.reflect.Field;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,8 +25,14 @@ public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
                 String col = getColumnName(field);
                 field.setAccessible(true);
                 Object value = rs.getObject(col);
-                if (field.getType().isEnum() && value != null) {
-                    value = Enum.valueOf((Class<Enum>) field.getType(), value.toString());
+                if (value != null) {
+                    if (field.getType() == LocalDate.class && value instanceof Date) {
+                        value = ((Date) value).toLocalDate();
+                    } else if (field.getType() == LocalDateTime.class && value instanceof Timestamp) {
+                        value = ((Timestamp) value).toLocalDateTime();
+                    } else if (field.getType().isEnum()) {
+                        value = Enum.valueOf((Class<Enum>) field.getType(), value.toString());
+                    }
                 }
                 field.set(entity, value);
             }

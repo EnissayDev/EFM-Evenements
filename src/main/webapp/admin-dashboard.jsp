@@ -50,7 +50,7 @@
         <div class="container header-content">
             <a href="#" class="logo">EventTix <span style="font-size: 14px; color: #d10000;">| SuperAdmin</span></a>
             <nav>
-                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Déconnexion</a>
+                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
             </nav>
         </div>
     </header>

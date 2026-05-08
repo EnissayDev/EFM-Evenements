@@ -14,6 +14,14 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Contrôle</span></div>
+            <nav>
+                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+            </nav>
+        </div>
+    </header>
     <div class="container scanner-wrapper">
         <div class="card scanner-card">
             <h2 style="margin-top: 0; color: var(--text-dark);">Scanner de Billets</h2>
@@ -30,7 +38,49 @@
     <!-- Pass dynamic context path to external JS -->
     <script>
         const APP_CONTEXT_PATH = '${pageContext.request.contextPath}';
+        document.getElementById('btnScan').addEventListener('click', function() {
+
+                const qrCodeValue = document.getElementById('qrInput').value;
+                const resultDiv = document.getElementById('resultMessage');
+
+                if (!qrCodeValue) {
+                    return;
+                }
+
+                fetch(APP_CONTEXT_PATH + '/validation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'same-origin',
+                    body: 'qrCode=' + encodeURIComponent(qrCodeValue)
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.status === 'OK') {
+                        resultDiv.style.color = 'green';
+                        resultDiv.innerText = 'Accès validé.';
+                    } else {
+                        resultDiv.style.color = 'red';
+                        resultDiv.innerText = 'Accès refusé : Billet invalide ou déjà consommé.';
+                    }
+
+                    document.getElementById('qrInput').value = '';
+                    document.getElementById('qrInput').focus();
+                })
+                .catch(function(error) {
+                    resultDiv.style.color = 'red';
+                    resultDiv.innerText =
+                        'Erreur de connexion au serveur. (error:' + error.message + ')';
+                });
+
+            });
     </script>
-    <script src="${pageContext.request.contextPath}/js/scanner.js"></script>
+    <!-- <script src="${pageContext.request.contextPath}/js/scanner.js" defer></script> -->
 </body>
 </html>

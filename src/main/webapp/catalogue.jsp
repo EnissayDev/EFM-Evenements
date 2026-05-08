@@ -12,7 +12,14 @@
         <div class="container header-content">
             <div class="logo">EventTix</div>
             <nav>
-                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                <c:choose>
+                    <c:when test="${empty sessionScope.utilisateur}">
+                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                    </c:otherwise>
+                </c:choose>
             </nav>
         </div>
     </header>
@@ -28,8 +35,7 @@
                         <h3 class="card-title">${evenement.titre}</h3>
                         <div class="card-location">${evenement.lieu}</div>
                         <div class="card-footer">
-                            <!-- Fixed Path: Routes to ma.ismagi.controller.EvenementController -->
-                            <form action="${pageContext.request.contextPath}/EvenementController" method="GET">
+                            <form action="${pageContext.request.contextPath}/evenements" method="GET">
                                 <input type="hidden" name="id" value="${evenement.id}">
                                 <button type="submit" class="btn" style="width: 100%;">Réserver</button>
                             </form>

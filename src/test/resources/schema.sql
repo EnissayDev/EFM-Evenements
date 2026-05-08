@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS utilisateur (
 CREATE TABLE IF NOT EXISTS evenement (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(200) NOT NULL,
+    description TEXT,
     date DATE NOT NULL,
     capacite INT NOT NULL,
     lieu VARCHAR(255) NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS billet (
     id INT AUTO_INCREMENT PRIMARY KEY,
     commande_id INT NOT NULL,
     code VARCHAR(100) NOT NULL UNIQUE,
+    statut VARCHAR(20) NOT NULL DEFAULT 'ACTIF',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_billet_commande
         FOREIGN KEY (commande_id) REFERENCES commande(id)

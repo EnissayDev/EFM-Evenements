@@ -13,7 +13,10 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/catalogue.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/evenements?action=listAll" class="logo">EventTix</a>
+            <nav>
+                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+            </nav>
         </div>
     </header>
 
@@ -27,10 +30,11 @@
             </div>
         </div>
         <div class="card">
-            <!-- Fixed Path: Routes to ma.ismagi.controller.CommandeController -->
-            <form action="${pageContext.request.contextPath}/CommandeController" method="POST">
+            <form action="${pageContext.request.contextPath}/commandes" method="POST">
                 <input type="hidden" name="idEvenement" value="${idEvenement}">
                 <input type="hidden" name="place" value="${placeChoisie}">
+                <input type="hidden" name="quantite" value="${quantite}">
+                <input type="hidden" name="montant" value="${montant}">
                 <div class="form-group">
                     <label for="cardNumber">Numéro de carte</label>
                     <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" required>

@@ -3,11 +3,9 @@ package ma.ismagi.dao;
 import ma.ismagi.model.Commande;
 import ma.ismagi.utils.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CommandeDAO extends JdbcDao<Commande, Integer> {
@@ -21,10 +19,37 @@ public class CommandeDAO extends JdbcDao<Commande, Integer> {
     @Override
     protected Class<Commande> entityClass() { return Commande.class; }
 
-    /**
-     * Returns all commandes for events belonging to a given organiser,
-     * with the event title included (not a mapped column, filled manually).
-     */
+    public int createAndGetId(Commande commande) {
+        LinkedHashMap<String, Object> values = insertValues(commande);
+
+        StringBuilder columns      = new StringBuilder();
+        StringBuilder placeholders = new StringBuilder();
+        int i = 0;
+        for (String col : values.keySet()) {
+            if (i++ > 0) { columns.append(", "); placeholders.append(", "); }
+            columns.append(col);
+            placeholders.append("?");
+        }
+
+        String sql = "INSERT INTO commande (" + columns + ") VALUES (" + placeholders + ")";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            int index = 1;
+            for (Object value : values.values()) ps.setObject(index++, value);
+            ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) return keys.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creating commande", e);
+        }
+
+        throw new RuntimeException("No generated key returned for commande");
+    }
+
     public List<Commande> findByOrganisateur(int organisateurId) {
         List<Commande> commandes = new ArrayList<>();
 

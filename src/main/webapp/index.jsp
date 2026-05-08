@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -37,7 +38,14 @@
         <div class="container header-content">
             <a href="${pageContext.request.contextPath}/index.jsp" class="logo">EventTix</a>
             <nav>
-                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                <c:choose>
+                    <c:when test="${empty sessionScope.utilisateur}">
+                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                    </c:otherwise>
+                </c:choose>
             </nav>
         </div>
     </header>
@@ -47,7 +55,7 @@
             <h1>Vos prochains meilleurs souvenirs commencent ici.</h1>
             <p>Découvrez des concerts, des conférences et des événements exclusifs près de chez vous.</p>
             <!-- Fixed Path: Route dynamically to the controller -->
-            <form action="${pageContext.request.contextPath}/EvenementController" method="GET">
+            <form action="${pageContext.request.contextPath}/evenements" method="GET">
                 <input type="hidden" name="action" value="listAll">
                 <button type="submit" class="btn" style="font-size: 18px; padding: 15px 40px;">Parcourir les événements</button>
             </form>

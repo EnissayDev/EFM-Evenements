@@ -36,12 +36,7 @@ public class AuthController extends HttpServlet {
             session.setAttribute("utilisateur", utilisateur);
             session.setAttribute("role", utilisateur.getRole().name());
 
-            switch (utilisateur.getRole()) {
-                case ADMIN -> resp.sendRedirect(req.getContextPath() + "/admin-dashboard.jsp");
-                case AGENT_CONTROLE -> resp.sendRedirect(req.getContextPath() + "/EvenementController");
-                case ORGANISATEUR -> resp.sendRedirect(req.getContextPath() + "/EvenementController");
-                default -> resp.sendRedirect(req.getContextPath() + "/catalogue.jsp");
-            }
+            resp.sendRedirect(req.getContextPath() + utilisateur.getRole().getDefaultRedirect());
 
         } else {
             req.setAttribute("erreurMessage", "Email ou mot de passe incorrect.");

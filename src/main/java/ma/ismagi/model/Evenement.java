@@ -19,6 +19,9 @@ public class Evenement {
     private String titre;
 
     @Column
+    private String description;
+
+    @Column
     private LocalDate date;
 
     @Column

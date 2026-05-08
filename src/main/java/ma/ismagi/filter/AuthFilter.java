@@ -10,6 +10,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import ma.ismagi.model.Role;
+import ma.ismagi.model.Utilisateur;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,13 +39,15 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletRequest  req  = (HttpServletRequest)  request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        String path = req.getRequestURI().substring(req.getContextPath().length());
+        String path  = req.getRequestURI().substring(req.getContextPath().length());
+        String query = req.getQueryString();
 
         boolean isPublic = PUBLIC_EXACT.contains(path)
-                || PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
+                || PUBLIC_PREFIXES.stream().anyMatch(path::startsWith)
+                || (path.equals("/evenements") && "action=listAll".equals(query));
 
         if (isPublic) {
             chain.doFilter(request, response);
@@ -51,10 +55,19 @@ public class AuthFilter implements Filter {
         }
 
         HttpSession session = req.getSession(false);
-        boolean loggedIn = session != null && session.getAttribute("utilisateur") != null;
+        Utilisateur utilisateur = (session != null)
+                ? (Utilisateur) session.getAttribute("utilisateur")
+                : null;
 
-        if (!loggedIn) {
+        if (utilisateur == null) {
             resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        Role role = utilisateur.getRole();
+
+        if (path.endsWith(".jsp") && !role.getAllowedPages().contains(path)) {
+            resp.sendRedirect(req.getContextPath() + role.getDefaultRedirect());
             return;
         }
 

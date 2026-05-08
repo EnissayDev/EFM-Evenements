@@ -14,7 +14,10 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/catalogue.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/evenements?action=listAll" class="logo">EventTix</a>
+            <nav>
+                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+            </nav>
         </div>
     </header>
 
@@ -31,8 +34,7 @@
         <div>
             <div class="card" style="position: sticky; top: 100px;">
                 <h3 style="margin-top: 0;">Billetterie</h3>
-                <!-- Fixed Path: Routes to ma.ismagi.controller.CommandeController -->
-                <form action="${pageContext.request.contextPath}/CommandeController" method="GET">
+                <form action="${pageContext.request.contextPath}/commandes" method="GET">
                     <input type="hidden" name="action" value="preparePayment">
                     <input type="hidden" name="idEvenement" value="${evenement.id}">
                     <div class="form-group">
