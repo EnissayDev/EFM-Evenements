@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,9 +15,9 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/evenements?action=listAll" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/catalogue" class="logo">EventTix</a>
             <nav>
-                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
             </nav>
         </div>
     </header>
@@ -32,6 +32,30 @@
             <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 30px;">🎟️ Capacité : ${billetsSold}/${evenement.capacite} places</p>
             <h2>À propos de cet événement</h2>
             <p style="font-size: 16px; line-height: 1.6;">${evenement.description}</p>
+
+            <c:if test="${not empty mesBillets}">
+                <h2 style="margin-top: 40px;">Mes Billets</h2>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <c:forEach var="billet" items="${mesBillets}">
+                        <div style="display: flex; align-items: center; justify-content: space-between;
+                                    border: 1px solid var(--border-color); border-radius: 10px;
+                                    padding: 14px 18px; background: var(--bg-light);">
+                            <div>
+                                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Code du billet</div>
+                                <code style="font-size: 15px; font-weight: 600; letter-spacing: 0.5px;">${billet.code}</code>
+                            </div>
+                            <c:choose>
+                                <c:when test="${billet.statut == 'VALIDE'}">
+                                    <span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:600;">Utilisé</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span style="background:#e0f2fe; color:#0284c7; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:600;">Actif</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:forEach>
+                </div>
+            </c:if>
         </div>
         <div>
             <div class="card" style="position: sticky; top: 100px;">
@@ -44,8 +68,7 @@
                         <c:if test="${param.error == 'complet'}">
                             <p style="color: red; margin-bottom: 12px;">La quantité demandée dépasse la capacité restante.</p>
                         </c:if>
-                        <form action="${pageContext.request.contextPath}/commandes" method="GET">
-                            <input type="hidden" name="action" value="preparePayment">
+                        <form action="${pageContext.request.contextPath}/paiement" method="GET">
                             <input type="hidden" name="idEvenement" value="${evenement.id}">
                             <div class="form-group">
                                 <label for="typePlace">Type de Billet</label>

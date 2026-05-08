@@ -14,9 +14,9 @@
 <body>
 <header>
     <div class="container header-content">
-        <a href="#" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
+        <a href="${pageContext.request.contextPath}/dashboard" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
         <nav>
-            <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
         </nav>
     </div>
 </header>
@@ -36,7 +36,7 @@
             <form action="${pageContext.request.contextPath}/evenements"
                   method="POST"
                   accept-charset="UTF-8">
-                      <input type="hidden" name="action" value="create">
+                <input type="hidden" name="action" value="create">
                 <div class="form-group">
                     <label for="titre">Titre de l'événement</label>
                     <input type="text" id="titre" name="titre" required>

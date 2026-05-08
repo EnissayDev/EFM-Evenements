@@ -13,15 +13,14 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/index.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/" class="logo">EventTix</a>
         </div>
     </header>
 
     <div class="container login-wrapper">
         <div class="card login-card">
             <h2 style="margin-top: 0; font-size: 28px;">Connectez-vous</h2>
-            <!-- Fixed Path: Routes to ma.ismagi.controller.AuthController -->
-            <form action="${pageContext.request.contextPath}/AuthController" method="POST">
+            <form action="${pageContext.request.contextPath}/login" method="POST">
                 <div class="form-group">
                     <label for="email">Adresse e-mail</label>
                     <input type="email" id="email" name="email" required>

@@ -18,7 +18,7 @@
         <div class="container header-content">
             <div class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Contrôle</span></div>
             <nav>
-                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
             </nav>
         </div>
     </header>

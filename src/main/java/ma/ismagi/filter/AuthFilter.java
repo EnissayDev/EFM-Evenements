@@ -10,7 +10,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 
 import java.io.IOException;
@@ -22,11 +21,12 @@ public class AuthFilter implements Filter {
     private static final List<String> PUBLIC_EXACT = List.of(
             "/",
             "/index.jsp",
-            "/login.jsp"
+            "/login",
+            "/catalogue"
     );
 
     private static final List<String> PUBLIC_PREFIXES = List.of(
-            "/AuthController",
+            "/logout",
             "/css/",
             "/js/",
             "/images/"
@@ -42,12 +42,22 @@ public class AuthFilter implements Filter {
         HttpServletRequest  req  = (HttpServletRequest)  request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        String path  = req.getRequestURI().substring(req.getContextPath().length());
-        String query = req.getQueryString();
+        String path = req.getRequestURI().substring(req.getContextPath().length());
+
+        // Block direct JSP access — all JSPs are served exclusively via controller forwards
+        if (path.endsWith(".jsp")) {
+            HttpSession session = req.getSession(false);
+            Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+            if (u != null) {
+                resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/login");
+            }
+            return;
+        }
 
         boolean isPublic = PUBLIC_EXACT.contains(path)
-                || PUBLIC_PREFIXES.stream().anyMatch(path::startsWith)
-                || (path.equals("/evenements") && "action=listAll".equals(query));
+                || PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
 
         if (isPublic) {
             chain.doFilter(request, response);
@@ -60,14 +70,7 @@ public class AuthFilter implements Filter {
                 : null;
 
         if (utilisateur == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-            return;
-        }
-
-        Role role = utilisateur.getRole();
-
-        if (path.endsWith(".jsp") && !role.getAllowedPages().contains(path)) {
-            resp.sendRedirect(req.getContextPath() + role.getDefaultRedirect());
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 

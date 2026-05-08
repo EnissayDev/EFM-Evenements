@@ -12,7 +12,7 @@ import ma.ismagi.utils.PasswordUtils;
 
 import java.io.IOException;
 
-@WebServlet("/AuthController")
+@WebServlet("/login")
 public class AuthController extends HttpServlet {
 
     private UtilisateurDAO dao;
@@ -23,10 +23,23 @@ public class AuthController extends HttpServlet {
     }
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+        if (u != null) {
+            resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
+            return;
+        }
+        req.getRequestDispatcher("/login.jsp").forward(req, resp);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email = req.getParameter("email");
+        String email    = req.getParameter("email");
         String password = req.getParameter("password");
 
         Utilisateur utilisateur = dao.findByAttribute("email", email);
@@ -35,25 +48,10 @@ public class AuthController extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("utilisateur", utilisateur);
             session.setAttribute("role", utilisateur.getRole().name());
-
             resp.sendRedirect(req.getContextPath() + utilisateur.getRole().getDefaultRedirect());
-
         } else {
             req.setAttribute("erreurMessage", "Email ou mot de passe incorrect.");
             req.getRequestDispatcher("/login.jsp").forward(req, resp);
-        }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        String action = req.getParameter("action");
-        if ("logout".equals(action)) {
-            req.getSession().invalidate();
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-        } else {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
         }
     }
 }

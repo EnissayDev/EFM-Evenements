@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>EventTix - La meilleure billetterie en ligne</title>
-    <!-- Use dynamic path for CSS to prevent broken styles -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
         .hero-home {
@@ -36,14 +35,14 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/index.jsp" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/" class="logo">EventTix</a>
             <nav>
                 <c:choose>
                     <c:when test="${empty sessionScope.utilisateur}">
-                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline">Connexion</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
                     </c:otherwise>
                 </c:choose>
             </nav>
@@ -54,11 +53,7 @@
         <div class="hero-content">
             <h1>Vos prochains meilleurs souvenirs commencent ici.</h1>
             <p>Découvrez des concerts, des conférences et des événements exclusifs près de chez vous.</p>
-            <!-- Fixed Path: Route dynamically to the controller -->
-            <form action="${pageContext.request.contextPath}/evenements" method="GET">
-                <input type="hidden" name="action" value="listAll">
-                <button type="submit" class="btn" style="font-size: 18px; padding: 15px 40px;">Parcourir les événements</button>
-            </form>
+            <a href="${pageContext.request.contextPath}/catalogue" class="btn" style="font-size: 18px; padding: 15px 40px;">Parcourir les événements</a>
         </div>
     </div>
 

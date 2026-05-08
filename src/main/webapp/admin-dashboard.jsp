@@ -148,7 +148,7 @@
             EventTix <span style="font-size:14px;color:#d10000;">| Admin</span>
         </a>
         <nav>
-            <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
         </nav>
     </div>
 </header>

@@ -18,7 +18,7 @@ import ma.ismagi.model.Utilisateur;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet("/commandes")
+@WebServlet(urlPatterns = {"/paiement", "/commandes"})
 public class CommandeController extends HttpServlet {
 
     private static final int PRIX_STANDARD = 150;
@@ -35,24 +35,13 @@ public class CommandeController extends HttpServlet {
         evenementDAO = new EvenementDAO();
     }
 
-    /** GET: calculate total and forward to paiement.jsp */
+    /** GET /paiement — show payment summary */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Utilisateur currentUser = getUser(req);
-        if (currentUser == null) { resp.sendRedirect(req.getContextPath() + "/login.jsp"); return; }
-        if (currentUser.getRole() != Role.PARTICIPANT) {
-            resp.sendRedirect(req.getContextPath() + currentUser.getRole().getDefaultRedirect());
-            return;
-        }
-
-        String action = req.getParameter("action");
-
-        if (!"preparePayment".equals(action)) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
+        Utilisateur participant = getParticipant(req, resp);
+        if (participant == null) return;
 
         String idEvenement = req.getParameter("idEvenement");
         String typePlace   = req.getParameter("typePlace");
@@ -64,15 +53,14 @@ public class CommandeController extends HttpServlet {
             quantite = Integer.parseInt(quantiteStr);
             if (quantite < 1) throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/evenements?action=listAll");
+            resp.sendRedirect(req.getContextPath() + "/catalogue");
             return;
         }
-
 
         Evenement evenement = evenementDAO.findById(idEvenementInt);
         int sold = commandeDAO.countBilletsByEvenement(idEvenementInt);
         if (sold + quantite > evenement.getCapacite()) {
-            resp.sendRedirect(req.getContextPath() + "/evenements?id=" + idEvenement + "&error=complet");
+            resp.sendRedirect(req.getContextPath() + "/evenement/" + idEvenement + "?error=complet");
             return;
         }
 
@@ -87,17 +75,13 @@ public class CommandeController extends HttpServlet {
         req.getRequestDispatcher("/paiement.jsp").forward(req, resp);
     }
 
-    /** POST: create commande + billets, redirect to catalogue */
+    /** POST /commandes — confirm order and create billets */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Utilisateur participant = getUser(req);
-        if (participant == null) { resp.sendRedirect(req.getContextPath() + "/login.jsp"); return; }
-        if (participant.getRole() != Role.PARTICIPANT) {
-            resp.sendRedirect(req.getContextPath() + participant.getRole().getDefaultRedirect());
-            return;
-        }
+        Utilisateur participant = getParticipant(req, resp);
+        if (participant == null) return;
 
         int idEvenement, quantite;
         double montant;
@@ -106,14 +90,14 @@ public class CommandeController extends HttpServlet {
             quantite    = Integer.parseInt(req.getParameter("quantite"));
             montant     = Double.parseDouble(req.getParameter("montant"));
         } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/evenements?action=listAll");
+            resp.sendRedirect(req.getContextPath() + "/catalogue");
             return;
         }
 
         Evenement evenement = evenementDAO.findById(idEvenement);
         int sold = commandeDAO.countBilletsByEvenement(idEvenement);
         if (sold + quantite > evenement.getCapacite()) {
-            resp.sendRedirect(req.getContextPath() + "/evenements?id=" + idEvenement + "&error=complet");
+            resp.sendRedirect(req.getContextPath() + "/evenement/" + idEvenement + "?error=complet");
             return;
         }
 
@@ -135,12 +119,23 @@ public class CommandeController extends HttpServlet {
             billetDAO.create(billet);
         }
 
-        resp.sendRedirect(req.getContextPath() + "/evenements?action=listAll&success=paid");
+        resp.sendRedirect(req.getContextPath() + "/catalogue?success=paid");
     }
 
-    private Utilisateur getUser(HttpServletRequest req) {
+    private Utilisateur getParticipant(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+
         HttpSession session = req.getSession(false);
-        if (session == null) return null;
-        return (Utilisateur) session.getAttribute("utilisateur");
+        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+
+        if (u == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return null;
+        }
+        if (u.getRole() != Role.PARTICIPANT) {
+            resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
+            return null;
+        }
+        return u;
     }
 }

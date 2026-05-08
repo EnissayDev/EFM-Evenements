@@ -13,9 +13,9 @@
 <body>
     <header>
         <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/evenements?action=listAll" class="logo">EventTix</a>
+            <a href="${pageContext.request.contextPath}/catalogue" class="logo">EventTix</a>
             <nav>
-                <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
             </nav>
         </div>
     </header>

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,14 +10,14 @@
 <body>
     <header>
         <div class="container header-content">
-            <div class="logo">EventTix</div>
+            <a href="${pageContext.request.contextPath}/" class="logo">EventTix</a>
             <nav>
                 <c:choose>
                     <c:when test="${empty sessionScope.utilisateur}">
-                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Connexion</a>
+                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline">Connexion</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
                     </c:otherwise>
                 </c:choose>
             </nav>
@@ -35,14 +35,14 @@
                         <h3 class="card-title">${evenement.titre}</h3>
                         <div class="card-location">${evenement.lieu}</div>
                         <div class="card-footer">
-                            <form action="${pageContext.request.contextPath}/evenements" method="GET">
-                                <input type="hidden" name="id" value="${evenement.id}">
-                                <button type="submit" class="btn" style="width: 100%;">Réserver</button>
-                            </form>
+                            <a href="${pageContext.request.contextPath}/evenement/${evenement.id}" class="btn" style="width: 100%; display: block; text-align: center; box-sizing: border-box;">Réserver</a>
                         </div>
                     </div>
                 </div>
             </c:forEach>
+            <c:if test="${empty evenements}">
+                <p style="color: var(--text-muted); margin-top: 40px;">Aucun événement disponible pour le moment.</p>
+            </c:if>
         </div>
     </div>
 </body>

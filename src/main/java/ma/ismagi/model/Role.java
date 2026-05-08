@@ -5,19 +5,19 @@ import java.util.List;
 public enum Role {
 
     PARTICIPANT(
-            List.of("/catalogue.jsp", "/detail-evenement.jsp", "/paiement.jsp"),
-            "/evenements?action=listAll"
+            List.of("/catalogue", "/evenement", "/paiement"),
+            "/catalogue"
     ),
     AGENT_CONTROLE(
-            List.of("/scanner.jsp"),
-            "/scanner.jsp"
+            List.of("/scanner"),
+            "/scanner"
     ),
     ORGANISATEUR(
-            List.of("/dashboard.jsp"),
-            "/evenements"
+            List.of("/dashboard"),
+            "/dashboard"
     ),
     ADMIN(
-            List.of("/admin-dashboard.jsp", "/dashboard.jsp"),
+            List.of("/admin", "/dashboard"),
             "/admin"
     );
 
