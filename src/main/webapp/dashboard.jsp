@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,19 +12,27 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <a href="#" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
-            <nav>
-                <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline">Déconnexion</a>
-            </nav>
-        </div>
-    </header>
+<header>
+    <div class="container header-content">
+        <a href="#" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
+        <nav>
+            <a href="${pageContext.request.contextPath}/AuthController?action=logout" class="btn btn-outline">Déconnexion</a>
+        </nav>
+    </div>
+</header>
 
-    <div class="container dashboard-grid">
+<div class="container">
+
+    <c:if test="${not empty erreurMessage}">
+        <div class="alert alert-error" style="margin-top: 20px;">${erreurMessage}</div>
+    </c:if>
+    <c:if test="${not empty successMessage}">
+        <div class="alert alert-success" style="margin-top: 20px;">${successMessage}</div>
+    </c:if>
+
+    <div class="dashboard-grid">
         <div class="card">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Créer un Nouvel Événement</h2>
-            <!-- Fixed Path: Routes to ma.ismagi.controller.EvenementController -->
             <form action="${pageContext.request.contextPath}/EvenementController" method="POST">
                 <input type="hidden" name="action" value="create">
                 <div class="form-group">
@@ -51,21 +59,22 @@
 
         <div class="card">
             <h2 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">Aperçu des Ventes</h2>
-             <c:if test="${empty ventes}">
-                 <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
-                    <p>Aucune vente enregistrée pour le moment.</p>
-                 </div>
-             </c:if>
-             <ul style="list-style: none; padding: 0; margin: 0;">
-                <c:forEach var="vente" items="${ventes}">
+            <c:if test="${empty commandes}">
+                <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                    <p>Aucune commande enregistrée pour le moment.</p>
+                </div>
+            </c:if>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <c:forEach var="commande" items="${commandes}">
                     <li style="padding: 15px 0; border-bottom: 1px solid var(--border-color);">
-                        <strong style="display: block; font-size: 16px;">${vente.evenementTitre}</strong>
-                        <span style="color: var(--text-muted);">${vente.quantite} billets vendus</span>
-                        <span style="float: right; color: var(--primary-orange); font-weight: bold;">${vente.revenuTotal} MAD</span>
+                        <strong style="display: block; font-size: 16px;">${commande.evenementTitre}</strong>
+                        <span style="color: var(--text-muted);">${commande.quantite} billets vendus</span>
+                        <span style="float: right; color: var(--primary-orange); font-weight: bold;">${commande.montantTotal} MAD</span>
                     </li>
                 </c:forEach>
-             </ul>
+            </ul>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -2,5 +2,7 @@ package ma.ismagi.model;
 
 public enum Role {
 
-    PARTICIPANT, ORGANISATEUR, ADMIN;
+    PARTICIPANT, AGENT_CONTROLE, ORGANISATEUR, ADMIN;
+
+
 }
