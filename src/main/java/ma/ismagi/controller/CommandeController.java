@@ -24,18 +24,17 @@ public class CommandeController extends HttpServlet {
     private static final int PRIX_STANDARD = 150;
     private static final int PRIX_VIP      = 300;
 
-    private CommandeDAO  commandeDAO;
-    private BilletDAO    billetDAO;
+    private CommandeDAO commandeDAO;
+    private BilletDAO billetDAO;
     private EvenementDAO evenementDAO;
 
     @Override
     public void init() {
-        commandeDAO  = new CommandeDAO();
-        billetDAO    = new BilletDAO();
+        commandeDAO = new CommandeDAO();
+        billetDAO = new BilletDAO();
         evenementDAO = new EvenementDAO();
     }
 
-    /** GET /paiement — show payment summary */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -44,7 +43,7 @@ public class CommandeController extends HttpServlet {
         if (participant == null) return;
 
         String idEvenement = req.getParameter("idEvenement");
-        String typePlace   = req.getParameter("typePlace");
+        String typePlace = req.getParameter("typePlace");
         String quantiteStr = req.getParameter("quantite");
 
         int quantite, idEvenementInt;
@@ -67,15 +66,14 @@ public class CommandeController extends HttpServlet {
         int prixUnitaire = "vip".equalsIgnoreCase(typePlace) ? PRIX_VIP : PRIX_STANDARD;
         double montant   = (double) prixUnitaire * quantite;
 
-        req.setAttribute("idEvenement",  idEvenement);
+        req.setAttribute("idEvenement", idEvenement);
         req.setAttribute("placeChoisie", typePlace);
-        req.setAttribute("quantite",     quantite);
-        req.setAttribute("montant",      montant);
+        req.setAttribute("quantite", quantite);
+        req.setAttribute("montant", montant);
 
         req.getRequestDispatcher("/paiement.jsp").forward(req, resp);
     }
 
-    /** POST /commandes — confirm order and create billets */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -87,8 +85,8 @@ public class CommandeController extends HttpServlet {
         double montant;
         try {
             idEvenement = Integer.parseInt(req.getParameter("idEvenement"));
-            quantite    = Integer.parseInt(req.getParameter("quantite"));
-            montant     = Double.parseDouble(req.getParameter("montant"));
+            quantite = Integer.parseInt(req.getParameter("quantite"));
+            montant = Double.parseDouble(req.getParameter("montant"));
         } catch (NumberFormatException e) {
             resp.sendRedirect(req.getContextPath() + "/catalogue");
             return;

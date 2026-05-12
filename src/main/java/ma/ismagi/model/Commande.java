@@ -26,6 +26,6 @@ public class Commande {
     @Column("montant_total")
     private double montantTotal;
 
-    // Not a DB column — populated by custom JOIN query in CommandeDAO
+    // Not a DB column
     private String evenementTitre;
 }

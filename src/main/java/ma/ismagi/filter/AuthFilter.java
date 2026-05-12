@@ -44,7 +44,6 @@ public class AuthFilter implements Filter {
 
         String path = req.getRequestURI().substring(req.getContextPath().length());
 
-        // Block direct JSP access — all JSPs are served exclusively via controller forwards
         if (path.endsWith(".jsp")) {
             HttpSession session = req.getSession(false);
             Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;

@@ -39,7 +39,7 @@ public class AuthController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String email    = req.getParameter("email");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
 
         Utilisateur utilisateur = dao.findByAttribute("email", email);

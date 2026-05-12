@@ -20,14 +20,14 @@ import java.util.List;
 public class AdminController extends HttpServlet {
 
     private UtilisateurDAO utilisateurDAO;
-    private EvenementDAO   evenementDAO;
-    private CommandeDAO    commandeDAO;
+    private EvenementDAO evenementDAO;
+    private CommandeDAO commandeDAO;
 
     @Override
     public void init() {
         utilisateurDAO = new UtilisateurDAO();
-        evenementDAO   = new EvenementDAO();
-        commandeDAO    = new CommandeDAO();
+        evenementDAO = new EvenementDAO();
+        commandeDAO = new CommandeDAO();
     }
 
     @Override
@@ -39,14 +39,14 @@ public class AdminController extends HttpServlet {
         List<Utilisateur> utilisateurs = utilisateurDAO.findAll();
 
         long nbOrganisateurs = utilisateurs.stream().filter(u -> u.getRole() == Role.ORGANISATEUR).count();
-        long nbAgents        = utilisateurs.stream().filter(u -> u.getRole() == Role.AGENT_CONTROLE).count();
+        long nbAgents = utilisateurs.stream().filter(u -> u.getRole() == Role.AGENT_CONTROLE).count();
 
-        req.setAttribute("utilisateurs",      utilisateurs);
+        req.setAttribute("utilisateurs", utilisateurs);
         req.setAttribute("totalUtilisateurs", utilisateurs.size());
-        req.setAttribute("totalEvenements",   evenementDAO.findAll().size());
-        req.setAttribute("totalCommandes",    commandeDAO.findAll().size());
-        req.setAttribute("nbOrganisateurs",   nbOrganisateurs);
-        req.setAttribute("nbAgents",          nbAgents);
+        req.setAttribute("totalEvenements", evenementDAO.findAll().size());
+        req.setAttribute("totalCommandes", commandeDAO.findAll().size());
+        req.setAttribute("nbOrganisateurs", nbOrganisateurs);
+        req.setAttribute("nbAgents", nbAgents);
 
         req.getRequestDispatcher("/admin-dashboard.jsp").forward(req, resp);
     }
@@ -61,17 +61,17 @@ public class AdminController extends HttpServlet {
 
         String action = req.getParameter("action");
         switch (action == null ? "" : action) {
-            case "changeRole"  -> handleChangeRole(req, resp, admin);
-            case "deleteUser"  -> handleDeleteUser(req, resp, admin);
-            case "createUser"  -> handleCreateUser(req, resp);
-            default            -> resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            case "changeRole" -> handleChangeRole(req, resp, admin);
+            case "deleteUser" -> handleDeleteUser(req, resp, admin);
+            case "createUser" -> handleCreateUser(req, resp);
+            default -> resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     private void handleChangeRole(HttpServletRequest req, HttpServletResponse resp, Utilisateur admin)
             throws IOException {
 
-        int    userId  = Integer.parseInt(req.getParameter("userId"));
+        int userId = Integer.parseInt(req.getParameter("userId"));
         String roleStr = req.getParameter("role");
 
         if (userId == admin.getId()) {
@@ -104,11 +104,11 @@ public class AdminController extends HttpServlet {
     private void handleCreateUser(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        String nom      = req.getParameter("nom");
-        String prenom   = req.getParameter("prenom");
-        String email    = req.getParameter("email");
+        String nom = req.getParameter("nom");
+        String prenom = req.getParameter("prenom");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String roleStr  = req.getParameter("role");
+        String roleStr = req.getParameter("role");
 
         if (nom == null || nom.isBlank()
                 || email == null || email.isBlank()

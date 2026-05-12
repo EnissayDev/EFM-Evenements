@@ -22,14 +22,14 @@ import java.util.List;
 public class EvenementController extends HttpServlet {
 
     private EvenementDAO evenementDAO;
-    private CommandeDAO  commandeDAO;
-    private BilletDAO    billetDAO;
+    private CommandeDAO commandeDAO;
+    private BilletDAO billetDAO;
 
     @Override
     public void init() {
         evenementDAO = new EvenementDAO();
-        commandeDAO  = new CommandeDAO();
-        billetDAO    = new BilletDAO();
+        commandeDAO = new CommandeDAO();
+        billetDAO = new BilletDAO();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class EvenementController extends HttpServlet {
             case "/catalogue" -> handleCatalogue(req, resp);
             case "/evenement" -> handleDetail(req, resp);
             case "/dashboard" -> handleDashboard(req, resp);
-            default           -> resp.sendRedirect(req.getContextPath() + "/catalogue");
+            default -> resp.sendRedirect(req.getContextPath() + "/catalogue");
         }
     }
 
@@ -125,11 +125,11 @@ public class EvenementController extends HttpServlet {
         Utilisateur organisateur = getOrganisateur(req, resp);
         if (organisateur == null) return;
 
-        String titre       = req.getParameter("titre");
+        String titre = req.getParameter("titre");
         String description = req.getParameter("description");
-        String dateStr     = req.getParameter("date");
-        String capStr      = req.getParameter("capacite");
-        String lieu        = req.getParameter("lieu");
+        String dateStr = req.getParameter("date");
+        String capStr = req.getParameter("capacite");
+        String lieu = req.getParameter("lieu");
 
         if (titre == null || titre.isBlank()
                 || dateStr == null || dateStr.isBlank()
