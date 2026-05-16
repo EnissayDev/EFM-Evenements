@@ -1,9 +1,11 @@
 package ma.ismagi.dao;
 
 import ma.ismagi.model.Column;
+import ma.ismagi.model.Table;
 import ma.ismagi.utils.DBConnection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,9 +15,21 @@ import java.util.List;
 
 public abstract class JdbcDao<T, ID> implements CrudDao<T, ID> {
 
-    protected abstract String tableName();
-    protected abstract String idColumn();
-    protected abstract Class<T> entityClass();
+    private Table tableAnnotation() {
+        Table ann = getClass().getAnnotation(Table.class);
+        if (ann == null)
+            throw new IllegalStateException(getClass().getSimpleName() + " is missing @Table annotation");
+        return ann;
+    }
+
+    protected String tableName() { return tableAnnotation().value(); }
+    protected String idColumn()  { return tableAnnotation().id(); }
+
+    @SuppressWarnings("unchecked")
+    protected Class<T> entityClass() {
+        return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0];
+    }
 
     protected T mapRow(ResultSet rs) throws SQLException {
         try {

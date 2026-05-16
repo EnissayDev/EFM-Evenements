@@ -1,6 +1,7 @@
 package ma.ismagi.dao;
 
 import ma.ismagi.model.Billet;
+import ma.ismagi.model.Table;
 import ma.ismagi.utils.DBConnection;
 
 import java.sql.Connection;
@@ -10,16 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Table("billet")
 public class BilletDAO extends JdbcDao<Billet, Integer> {
-
-    @Override
-    protected String tableName() { return "billet"; }
-
-    @Override
-    protected String idColumn() { return "id"; }
-
-    @Override
-    protected Class<Billet> entityClass() { return Billet.class; }
 
     public Billet findByCode(String code) {
         return findByAttribute("code", code);

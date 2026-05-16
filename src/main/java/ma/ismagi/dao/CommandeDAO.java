@@ -1,6 +1,7 @@
 package ma.ismagi.dao;
 
 import ma.ismagi.model.Commande;
+import ma.ismagi.model.Table;
 import ma.ismagi.utils.DBConnection;
 
 import java.sql.*;
@@ -8,16 +9,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+@Table("commande")
 public class CommandeDAO extends JdbcDao<Commande, Integer> {
-
-    @Override
-    protected String tableName() { return "commande"; }
-
-    @Override
-    protected String idColumn() { return "id"; }
-
-    @Override
-    protected Class<Commande> entityClass() { return Commande.class; }
 
     public int createAndGetId(Commande commande) {
         LinkedHashMap<String, Object> values = insertValues(commande);

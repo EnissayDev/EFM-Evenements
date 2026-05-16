@@ -32,4 +32,5 @@ public class ScannerController extends HttpServlet {
 
         req.getRequestDispatcher("/scanner.jsp").forward(req, resp);
     }
+
 }

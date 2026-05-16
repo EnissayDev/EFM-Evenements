@@ -1,15 +1,8 @@
 package ma.ismagi.dao;
 
 import ma.ismagi.model.Evenement;
+import ma.ismagi.model.Table;
 
+@Table("evenement")
 public class EvenementDAO extends JdbcDao<Evenement, Integer> {
-
-    @Override
-    protected String tableName() { return "evenement"; }
-
-    @Override
-    protected String idColumn() { return "id"; }
-
-    @Override
-    protected Class<Evenement> entityClass() { return Evenement.class; }
 }
