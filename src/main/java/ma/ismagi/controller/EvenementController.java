@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet(urlPatterns = {"/catalogue", "/evenement/*", "/dashboard", "/evenements"})
+@WebServlet(urlPatterns = {"/catalogue", "/evenements/*", "/evenement/*", "/dashboard"})
 public class EvenementController extends HttpServlet {
 
     private EvenementDAO evenementDAO;
@@ -40,7 +40,7 @@ public class EvenementController extends HttpServlet {
 
         switch (path) {
             case "/catalogue" -> handleCatalogue(req, resp);
-            case "/evenement" -> handleDetail(req, resp);
+            case "/evenements", "/evenement" -> handleDetail(req, resp);
             case "/dashboard" -> handleDashboard(req, resp);
             default -> resp.sendRedirect(req.getContextPath() + "/catalogue");
         }
@@ -65,7 +65,16 @@ public class EvenementController extends HttpServlet {
     private void handleCatalogue(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        List<Evenement> evenements = evenementDAO.findAll();
+        String keyword = req.getParameter("keyword");
+        String category = req.getParameter("category");
+
+        List<Evenement> evenements;
+        if ((keyword != null && !keyword.isBlank()) || (category != null && !category.isBlank())) {
+            evenements = evenementDAO.rechercher(keyword, category);
+        } else {
+            evenements = evenementDAO.findAll();
+        }
+
         req.setAttribute("evenements", evenements);
         req.getRequestDispatcher("/catalogue.jsp").forward(req, resp);
     }
@@ -74,7 +83,7 @@ public class EvenementController extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = req.getSession(false);
-        Utilisateur viewer = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+        Utilisateur viewer = (session != null) ? (Utilisateur) session.getAttribute("user") : null;
 
         if (viewer == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -177,11 +186,11 @@ public class EvenementController extends HttpServlet {
             throws IOException {
 
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("utilisateur") == null) {
+        if (session == null || session.getAttribute("user") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return null;
         }
-        Utilisateur u = (Utilisateur) session.getAttribute("utilisateur");
+        Utilisateur u = (Utilisateur) session.getAttribute("user");
         if (u.getRole() != Role.ORGANISATEUR && u.getRole() != Role.ADMIN) {
             resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
             return null;

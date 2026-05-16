@@ -139,10 +139,10 @@ public class AdminController extends HttpServlet {
             throws IOException {
 
         HttpSession session = req.getSession(false);
-        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("user") : null;
 
         if (u == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return null;
         }
         if (u.getRole() != Role.ADMIN) {

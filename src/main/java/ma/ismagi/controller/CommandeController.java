@@ -124,7 +124,7 @@ public class CommandeController extends HttpServlet {
             throws IOException {
 
         HttpSession session = req.getSession(false);
-        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+        Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("user") : null;
 
         if (u == null) {
             resp.sendRedirect(req.getContextPath() + "/login");

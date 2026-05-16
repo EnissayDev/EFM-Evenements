@@ -32,4 +32,7 @@ public class Evenement {
 
     @Column("organisateur_id")
     private int organisateurId;
+
+    @Column
+    private String categorie;
 }

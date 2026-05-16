@@ -30,7 +30,7 @@
 
                 <c:otherwise>
                     <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline" style="padding: 8px 16px;">Connexion</a>
-                    <a href="${pageContext.request.contextPath}/register.jsp" class="btn" style="padding: 8px 16px;">S'inscrire</a>
+                    <a href="${pageContext.request.contextPath}/register" class="btn" style="padding: 8px 16px;">S'inscrire</a>
                 </c:otherwise>
             </c:choose>
         </nav>

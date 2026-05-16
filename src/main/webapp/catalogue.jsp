@@ -30,7 +30,7 @@
     <div class="container">
         <h1 style="margin-top: 40px; font-size: 36px;">Trouvez votre prochain événement</h1>
 
-        <form action="${pageContext.request.contextPath}/EvenementController" method="GET" class="search-bar-container">
+        <form action="${pageContext.request.contextPath}/catalogue" method="GET" class="search-bar-container">
             <input type="hidden" name="action" value="search">
 
             <div class="search-input form-group" style="margin-bottom: 0;">
@@ -62,10 +62,7 @@
                         <h3 class="card-title">${evenement.titre}</h3>
                         <div class="card-location">${evenement.lieu}</div>
                         <div class="card-footer">
-                            <form action="${pageContext.request.contextPath}/EvenementController" method="GET">
-                                <input type="hidden" name="id" value="${evenement.id}">
-                                <button type="submit" class="btn" style="width: 100%;">Réserver</button>
-                            </form>
+                            <a href="${pageContext.request.contextPath}/evenements/${evenement.id}" class="btn" style="display: block; box-sizing: border-box;">Réserver</a>
                         </div>
                     </div>
                 </div>

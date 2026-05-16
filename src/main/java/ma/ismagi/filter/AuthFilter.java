@@ -22,6 +22,8 @@ public class AuthFilter implements Filter {
             "/",
             "/index.jsp",
             "/login",
+            "/register",
+            "/AuthController",
             "/catalogue"
     );
 
@@ -46,7 +48,7 @@ public class AuthFilter implements Filter {
 
         if (path.endsWith(".jsp")) {
             HttpSession session = req.getSession(false);
-            Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+            Utilisateur u = (session != null) ? (Utilisateur) session.getAttribute("user") : null;
             if (u != null) {
                 resp.sendRedirect(req.getContextPath() + u.getRole().getDefaultRedirect());
             } else {
@@ -65,7 +67,7 @@ public class AuthFilter implements Filter {
 
         HttpSession session = req.getSession(false);
         Utilisateur utilisateur = (session != null)
-                ? (Utilisateur) session.getAttribute("utilisateur")
+                ? (Utilisateur) session.getAttribute("user")
                 : null;
 
         if (utilisateur == null) {

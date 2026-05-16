@@ -30,7 +30,7 @@ public class ValidationController extends HttpServlet {
         resp.setContentType("application/json;charset=UTF-8");
 
         HttpSession session = req.getSession(false);
-        Utilisateur user = (session != null) ? (Utilisateur) session.getAttribute("utilisateur") : null;
+        Utilisateur user = (session != null) ? (Utilisateur) session.getAttribute("user") : null;
         if (user == null || user.getRole() != Role.AGENT_CONTROLE) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.getWriter().write("{\"status\":\"FORBIDDEN\"}");

@@ -12,6 +12,19 @@ public final class DataSeeder {
 
     private DataSeeder() {}
 
+    public static void runMigrations() {
+        try (Connection con = DBConnection.getConnection()) {
+            ResultSet rs = con.getMetaData().getColumns(null, null, "evenement", "categorie");
+            if (!rs.next()) {
+                try (Statement st = con.createStatement()) {
+                    st.execute("ALTER TABLE evenement ADD COLUMN categorie VARCHAR(50) DEFAULT 'Autre'");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to run schema migrations", e);
+        }
+    }
+
     public static void seedDefaultUsers() {
         try (Connection con = DBConnection.getConnection();
              Statement st = con.createStatement();

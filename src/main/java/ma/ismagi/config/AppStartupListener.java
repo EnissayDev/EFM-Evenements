@@ -19,6 +19,7 @@ public class AppStartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println("AppStartupListener started");
         SchemaInitializer.init();
+        DataSeeder.runMigrations();
         DataSeeder.seedDefaultUsers();
     }
 
