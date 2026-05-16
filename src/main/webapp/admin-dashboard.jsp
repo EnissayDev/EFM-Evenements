@@ -142,16 +142,7 @@
     </style>
 </head>
 <body>
-<header>
-    <div class="container header-content">
-        <a href="${pageContext.request.contextPath}/admin" class="logo">
-            EventTix <span style="font-size:14px;color:#d10000;">| Admin</span>
-        </a>
-        <nav>
-            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
-        </nav>
-    </div>
-</header>
+<jsp:include page="/nav.jsp" />
 
 <div class="container admin-layout">
 

@@ -11,11 +11,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/" class="logo">EventTix</a>
-        </div>
-    </header>
+<jsp:include page="/nav.jsp" />
 
     <div class="container login-wrapper">
         <div class="card login-card">

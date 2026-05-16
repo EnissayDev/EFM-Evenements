@@ -12,14 +12,7 @@
     </style>
 </head>
 <body>
-<header>
-    <div class="container header-content">
-        <a href="${pageContext.request.contextPath}/dashboard" class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Organisateur</span></a>
-        <nav>
-            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
-        </nav>
-    </div>
-</header>
+<jsp:include page="/nav.jsp" />
 
 <div class="container">
 

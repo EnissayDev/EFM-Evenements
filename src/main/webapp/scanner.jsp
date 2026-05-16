@@ -14,14 +14,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <div class="logo">EventTix <span style="font-size: 14px; color: var(--text-dark);">| Contrôle</span></div>
-            <nav>
-                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
-            </nav>
-        </div>
-    </header>
+<jsp:include page="/nav.jsp" />
     <div class="container scanner-wrapper">
         <div class="card scanner-card">
             <h2 style="margin-top: 0; color: var(--text-dark);">Scanner de Billets</h2>

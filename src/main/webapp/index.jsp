@@ -33,21 +33,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/" class="logo">EventTix</a>
-            <nav>
-                <c:choose>
-                    <c:when test="${empty sessionScope.utilisateur}">
-                        <a href="${pageContext.request.contextPath}/login" class="btn btn-outline">Connexion</a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
-                    </c:otherwise>
-                </c:choose>
-            </nav>
-        </div>
-    </header>
+<jsp:include page="/nav.jsp" />
 
     <div class="hero-home">
         <div class="hero-content">

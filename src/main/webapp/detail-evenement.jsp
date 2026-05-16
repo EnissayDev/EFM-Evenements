@@ -13,14 +13,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <a href="${pageContext.request.contextPath}/catalogue" class="logo">EventTix</a>
-            <nav>
-                <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline">Déconnexion</a>
-            </nav>
-        </div>
-    </header>
+<jsp:include page="/nav.jsp" />
 
     <div class="hero-banner"></div>
 
