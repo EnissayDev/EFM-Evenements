@@ -2,6 +2,7 @@ package ma.ismagi.config;
 
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import ma.ismagi.utils.DBConnection;
+import ma.ismagi.utils.DataSeeder;
 import ma.ismagi.utils.SchemaInitializer;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -18,6 +19,7 @@ public class AppStartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println("AppStartupListener started");
         SchemaInitializer.init();
+        DataSeeder.seedDefaultUsers();
     }
 
     @Override
