@@ -66,8 +66,8 @@
                             <div class="form-group">
                                 <label for="typePlace">Type de Billet</label>
                                 <select id="typePlace" name="typePlace">
-                                    <option value="standard">Standard (150 MAD)</option>
-                                    <option value="vip">VIP (300 MAD)</option>
+                                    <option value="standard">Standard (${evenement.prixStandard} MAD)</option>
+                                    <option value="vip">VIP (${evenement.prixVip} MAD)</option>
                                 </select>
                             </div>
                             <div class="form-group">
