@@ -30,7 +30,7 @@
     <div class="container">
         <h1 style="margin-top: 40px; font-size: 36px;">Trouvez votre prochain événement</h1>
 
-        <form action="${pageContext.request.contextPath}/EvenementController" method="GET" class="search-bar-container">
+        <form action="${pageContext.request.contextPath}/catalogue" method="GET" class="search-bar-container">
             <input type="hidden" name="action" value="search">
 
             <div class="search-input form-group" style="margin-bottom: 0;">

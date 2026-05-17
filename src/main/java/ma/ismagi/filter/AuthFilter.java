@@ -25,6 +25,7 @@ public class AuthFilter implements Filter {
             "/register",
             "/AuthController",
             "/catalogue",
+            "/EvenementController",
             "/BilletController"
     );
 

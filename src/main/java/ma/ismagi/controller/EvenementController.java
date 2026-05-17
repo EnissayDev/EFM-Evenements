@@ -27,7 +27,7 @@ import java.util.UUID;
         maxFileSize       = 10 * 1024 * 1024,
         maxRequestSize    = 15 * 1024 * 1024
 )
-@WebServlet(urlPatterns = {"/catalogue", "/evenements/*", "/evenement/*", "/dashboard"})
+@WebServlet(urlPatterns = {"/catalogue", "/EvenementController", "/evenements/*", "/evenement/*", "/dashboard"})
 public class EvenementController extends HttpServlet {
 
     private EvenementDAO evenementDAO;
@@ -49,6 +49,14 @@ public class EvenementController extends HttpServlet {
 
         switch (path) {
             case "/catalogue" -> handleCatalogue(req, resp);
+            case "/EvenementController" -> {
+                String id = req.getParameter("id");
+                if (id != null) {
+                    resp.sendRedirect(req.getContextPath() + "/evenements/" + id);
+                } else {
+                    handleCatalogue(req, resp);
+                }
+            }
             case "/evenements", "/evenement" -> handleDetail(req, resp);
             case "/dashboard" -> handleDashboard(req, resp);
             default -> resp.sendRedirect(req.getContextPath() + "/catalogue");
