@@ -4,13 +4,13 @@
 <header style="background-color: var(--white); border-bottom: 1px solid var(--border-color); padding: 15px 0; position: sticky; top: 0; z-index: 100;">
     <div class="container header-content" style="display: flex; justify-content: space-between; align-items: center;">
 
-        <a href="${pageContext.request.contextPath}/index.jsp" class="logo" style="font-size: 24px; font-weight: 800; color: var(--primary-orange); text-decoration: none;">EventTix</a>
+        <a href="${pageContext.request.contextPath}/" class="logo" style="font-size: 24px; font-weight: 800; color: var(--primary-orange); text-decoration: none;">EventTix</a>
 
         <nav style="display: flex; align-items: center; gap: 20px;">
 
             <c:if test="${sessionScope.user.role != 'AGENT_CONTROLE'}">
-                <a href="${pageContext.request.contextPath}/index.jsp" style="color: var(--text-dark); font-weight: 600; text-decoration: none;">Accueil</a>
-                <a href="${pageContext.request.contextPath}/catalogue.jsp" style="color: var(--text-dark); font-weight: 600; text-decoration: none;">Catalogue</a>
+                <a href="${pageContext.request.contextPath}/" style="color: var(--text-dark); font-weight: 600; text-decoration: none;">Accueil</a>
+                <a href="${pageContext.request.contextPath}/catalogue" style="color: var(--text-dark); font-weight: 600; text-decoration: none;">Catalogue</a>
             </c:if>
 
             <c:choose>

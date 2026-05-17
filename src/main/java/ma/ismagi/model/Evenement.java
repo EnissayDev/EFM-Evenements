@@ -35,4 +35,13 @@ public class Evenement {
 
     @Column
     private String categorie;
+
+    @Column("prix_standard")
+    private double prixStandard;
+
+    @Column("prix_vip")
+    private double prixVip;
+
+    @Column("image_path")
+    private String imagePath;
 }

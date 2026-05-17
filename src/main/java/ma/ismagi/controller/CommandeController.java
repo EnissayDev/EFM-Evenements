@@ -16,13 +16,11 @@ import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = {"/paiement", "/commandes"})
+@WebServlet(urlPatterns = {"/paiement", "/billet", "/commandes"})
 public class CommandeController extends HttpServlet {
-
-    private static final int PRIX_STANDARD = 150;
-    private static final int PRIX_VIP      = 300;
 
     private CommandeDAO commandeDAO;
     private BilletDAO billetDAO;
@@ -39,11 +37,18 @@ public class CommandeController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        String path = req.getServletPath();
+
+        if ("/billet".equals(path)) {
+            handleBillet(req, resp);
+            return;
+        }
+
         Utilisateur participant = getParticipant(req, resp);
         if (participant == null) return;
 
         String idEvenement = req.getParameter("idEvenement");
-        String typePlace = req.getParameter("typePlace");
+        String typePlace   = req.getParameter("typePlace");
         String quantiteStr = req.getParameter("quantite");
 
         int quantite, idEvenementInt;
@@ -59,12 +64,12 @@ public class CommandeController extends HttpServlet {
         Evenement evenement = evenementDAO.findById(idEvenementInt);
         int sold = commandeDAO.countBilletsByEvenement(idEvenementInt);
         if (sold + quantite > evenement.getCapacite()) {
-            resp.sendRedirect(req.getContextPath() + "/evenement/" + idEvenement + "?error=complet");
+            resp.sendRedirect(req.getContextPath() + "/evenements/" + idEvenement + "?error=complet");
             return;
         }
 
-        int prixUnitaire = "vip".equalsIgnoreCase(typePlace) ? PRIX_VIP : PRIX_STANDARD;
-        double montant   = (double) prixUnitaire * quantite;
+        double prixUnitaire = "vip".equalsIgnoreCase(typePlace) ? evenement.getPrixVip() : evenement.getPrixStandard();
+        double montant = prixUnitaire * quantite;
 
         req.setAttribute("idEvenement", idEvenement);
         req.setAttribute("placeChoisie", typePlace);
@@ -72,6 +77,24 @@ public class CommandeController extends HttpServlet {
         req.setAttribute("montant", montant);
 
         req.getRequestDispatcher("/paiement.jsp").forward(req, resp);
+    }
+
+    private void handleBillet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+        List<Billet> billets = session != null ? (List<Billet>) session.getAttribute("derniersBillets") : null;
+        if (billets == null || billets.isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/catalogue");
+            return;
+        }
+
+        req.setAttribute("billet", billets.get(0));
+        req.setAttribute("billets", billets);
+        req.setAttribute("evenement", session.getAttribute("dernierEvenement"));
+        session.removeAttribute("derniersBillets");
+        session.removeAttribute("dernierEvenement");
+        req.getRequestDispatcher("/billet.jsp").forward(req, resp);
     }
 
     @Override
@@ -117,7 +140,11 @@ public class CommandeController extends HttpServlet {
             billetDAO.create(billet);
         }
 
-        resp.sendRedirect(req.getContextPath() + "/catalogue?success=paid");
+        List<Billet> billets = billetDAO.findByParticipantAndEvenement(participant.getId(), idEvenement);
+        HttpSession session = req.getSession();
+        session.setAttribute("derniersBillets", billets);
+        session.setAttribute("dernierEvenement", evenement);
+        resp.sendRedirect(req.getContextPath() + "/billet");
     }
 
     private Utilisateur getParticipant(HttpServletRequest req, HttpServletResponse resp)

@@ -31,7 +31,8 @@ public class AuthFilter implements Filter {
             "/logout",
             "/css/",
             "/js/",
-            "/images/"
+            "/images/",
+            "/uploads/"
     );
 
     @Override

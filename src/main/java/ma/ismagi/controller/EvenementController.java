@@ -1,8 +1,10 @@
 package ma.ismagi.controller;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.Part;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -14,10 +16,17 @@ import ma.ismagi.model.Evenement;
 import ma.ismagi.model.Role;
 import ma.ismagi.model.Utilisateur;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize       = 10 * 1024 * 1024,
+        maxRequestSize    = 15 * 1024 * 1024
+)
 @WebServlet(urlPatterns = {"/catalogue", "/evenements/*", "/evenement/*", "/dashboard"})
 public class EvenementController extends HttpServlet {
 
@@ -134,16 +143,21 @@ public class EvenementController extends HttpServlet {
         Utilisateur organisateur = getOrganisateur(req, resp);
         if (organisateur == null) return;
 
-        String titre = req.getParameter("titre");
+        String titre       = req.getParameter("titre");
         String description = req.getParameter("description");
-        String dateStr = req.getParameter("date");
-        String capStr = req.getParameter("capacite");
-        String lieu = req.getParameter("lieu");
+        String dateStr     = req.getParameter("date");
+        String capStr      = req.getParameter("capacite");
+        String lieu        = req.getParameter("lieu");
+        String categorie   = req.getParameter("categorie");
+        String prixStdStr  = req.getParameter("prixStandard");
+        String prixVipStr  = req.getParameter("prixVip");
 
         if (titre == null || titre.isBlank()
-                || dateStr == null || dateStr.isBlank()
-                || capStr  == null || capStr.isBlank()
-                || lieu    == null || lieu.isBlank()) {
+                || dateStr    == null || dateStr.isBlank()
+                || capStr     == null || capStr.isBlank()
+                || lieu       == null || lieu.isBlank()
+                || prixStdStr == null || prixStdStr.isBlank()
+                || prixVipStr == null || prixVipStr.isBlank()) {
 
             req.setAttribute("erreurMessage", "Tous les champs sont obligatoires.");
             handleDashboard(req, resp);
@@ -160,6 +174,16 @@ public class EvenementController extends HttpServlet {
             return;
         }
 
+        double prixStandard, prixVip;
+        try {
+            prixStandard = Double.parseDouble(prixStdStr);
+            prixVip      = Double.parseDouble(prixVipStr);
+        } catch (NumberFormatException e) {
+            req.setAttribute("erreurMessage", "Les prix doivent être des nombres valides.");
+            handleDashboard(req, resp);
+            return;
+        }
+
         LocalDate date;
         try {
             date = LocalDate.parse(dateStr);
@@ -169,12 +193,30 @@ public class EvenementController extends HttpServlet {
             return;
         }
 
+        String imagePath = null;
+        Part filePart = req.getPart("imageEvent");
+        if (filePart != null && filePart.getSize() > 0) {
+            String uploadDir = getServletContext().getRealPath("/uploads/events");
+            new File(uploadDir).mkdirs();
+
+            String original  = filePart.getSubmittedFileName();
+            String ext       = original.contains(".") ? original.substring(original.lastIndexOf('.')) : "";
+            String fileName  = UUID.randomUUID() + ext;
+
+            filePart.write(uploadDir + File.separator + fileName);
+            imagePath = "/uploads/events/" + fileName;
+        }
+
         Evenement evenement = Evenement.builder()
                 .titre(titre)
                 .description(description)
                 .date(date)
                 .capacite(capacite)
                 .lieu(lieu)
+                .categorie(categorie)
+                .prixStandard(prixStandard)
+                .prixVip(prixVip)
+                .imagePath(imagePath)
                 .organisateurId(organisateur.getId())
                 .build();
 

@@ -35,9 +35,9 @@
     <div class="container ticket-wrapper">
         <div class="ticket">
             <h2 style="color: var(--primary-orange); margin-top: 0;">Billet Confirmé !</h2>
-            <p><strong>Événement :</strong> ${billet.evenementTitre}</p>
-            <p><strong>Lieu :</strong> ${billet.lieu}</p>
-            <p><strong>Date :</strong> ${billet.date}</p>
+            <p><strong>Événement :</strong> ${evenement.titre}</p>
+            <p><strong>Lieu :</strong> ${evenement.lieu}</p>
+            <p><strong>Date :</strong> ${evenement.date}</p>
             <p><strong>Participant :</strong> ${sessionScope.user.prenom} ${sessionScope.user.nom}</p>
 
             <hr style="border: none; border-top: 1px dashed #ccc; margin: 20px 0;">
@@ -47,7 +47,7 @@
             <div id="qrcode" class="qr-container"></div>
 
             <p style="font-family: monospace; font-size: 16px; font-weight: bold; letter-spacing: 2px;">
-                ${billet.codeSecret}
+                ${billet.code}
             </p>
 
             <button onclick="window.print()" class="btn btn-outline" style="width: 100%; margin-top: 15px;">Imprimer le billet</button>
@@ -59,9 +59,9 @@
         document.addEventListener("DOMContentLoaded", function() {
             // On récupère le code généré par le backend (ex: "TICKET-12345-XYZ")
             // S'il est vide (test local), on met un code par défaut
-            var codeBillet = "${billet.codeSecret}";
+            var codeBillet = "${billet.code}";
             if (!codeBillet) {
-                codeBillet = "CODE-TEST-123";
+                codeBillet = "Erreur";
             }
 
             // Génération magique du QR Code

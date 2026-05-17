@@ -52,7 +52,7 @@ public class AuthController extends HttpServlet {
         if ("logout".equals(action)) {
             HttpSession session = req.getSession(false);
             if (session != null) session.invalidate();
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
