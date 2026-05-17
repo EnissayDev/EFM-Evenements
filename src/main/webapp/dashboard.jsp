@@ -56,19 +56,26 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label for="categorie">Catégorie</label>
-                        <select id="categorie" name="categorie" required style="width: 100%; padding: 12px; border: 1px solid #c8c6c4; border-radius: 4px; font-size: 16px;">
-                            <option value="Musique">Musique</option>
-                            <option value="Technologie">Technologie</option>
-                            <option value="Sport">Sport</option>
-                            <option value="Art">Art & Culture</option>
-                            <option value="Autre">Autre</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="prix">Prix du billet (MAD)</label>
-                        <input type="number" id="prix" name="prix" min="0" step="0.01" required>
-                    </div>
+                                        <label for="categorie">Catégorie</label>
+                                        <select id="categorie" name="categorie" required style="width: 100%; padding: 12px; border: 1px solid #c8c6c4; border-radius: 4px; font-size: 16px;">
+                                            <option value="Musique">Musique</option>
+                                            <option value="Technologie">Technologie</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Art">Art & Culture</option>
+                                            <option value="Autre">Autre</option>
+                                        </select>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                        <div class="form-group">
+                                            <label for="prixStandard">Prix Standard (MAD)</label>
+                                            <input type="number" id="prixStandard" name="prixStandard" min="0" step="0.01" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="prixVip">Prix VIP (MAD)</label>
+                                            <input type="number" id="prixVip" name="prixVip" min="0" step="0.01" required>
+                                        </div>
+                                    </div>
                 </div>
 
                 <div class="form-group">
