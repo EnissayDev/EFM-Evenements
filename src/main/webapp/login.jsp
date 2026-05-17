@@ -34,7 +34,7 @@
             <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                 <p style="margin: 0; color: var(--text-muted);">
                     Pas encore de compte ? <br>
-                    <a href="${pageContext.request.contextPath}/register.jsp" style="font-weight: bold; color: var(--primary-orange);">S'inscrire gratuitement</a>
+                    <a href="${pageContext.request.contextPath}/register" style="font-weight: bold; color: var(--primary-orange);">S'inscrire gratuitement</a>
                 </p>
             </div>
 

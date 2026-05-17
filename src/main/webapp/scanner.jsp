@@ -86,9 +86,9 @@
                 isProcessing = true;
 
                 // Mettre en pause la caméra pendant le traitement
-                if (html5QrcodeScanner) {
-                    html5QrcodeScanner.pause();
-                }
+                try {
+                    if (html5QrcodeScanner) html5QrcodeScanner.pause();
+                } catch (e) { /* already paused — safe to ignore */ }
 
                 // Utilisation de votre endpoint exact /validation et credentials
                 fetch(APP_CONTEXT_PATH + '/validation', {
@@ -122,6 +122,7 @@
                         resultDiv.innerHTML = '❌ ACCÈS REFUSÉ<br><span style="font-size:16px;font-weight:normal;">Billet invalide ou déjà consommé.</span>';
                     }
                     document.getElementById('qrInput').value = '';
+                    isProcessing = false;
                 })
                 .catch(function(error) {
                     cameraSection.style.display = 'none';
