@@ -59,7 +59,7 @@
                                         <code class="text-lg font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded-sm">${billet.code}</code>
                                     </div>
                                     <c:choose>
-                                        <c:when test="${billet.statut == 'VALIDE'}">
+                                        <c:when test="${billet.statut == 'ACTIF'}">
                                             <span class="bg-green-100 text-green-800 border border-green-200 px-3 py-1 text-xs font-bold uppercase rounded-sm">Actif</span>
                                         </c:when>
                                         <c:otherwise>

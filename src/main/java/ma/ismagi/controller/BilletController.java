@@ -16,7 +16,7 @@ import ma.ismagi.model.Utilisateur;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/BilletController")
+@WebServlet(urlPatterns = {"/billets", "/BilletController"})
 public class BilletController extends HttpServlet {
 
     private BilletDAO billetDAO;
@@ -58,7 +58,7 @@ public class BilletController extends HttpServlet {
 
         List<BilletDTO> billets = billetDAO.getBilletsFiltres(user.getId(), search, filter);
         req.setAttribute("billets", billets);
-        req.getRequestDispatcher("/mesBillets.jsp").forward(req, resp);
+        req.getRequestDispatcher("/mes-billets.jsp").forward(req, resp);
     }
 
     private void handleViewQR(HttpServletRequest req, HttpServletResponse resp, Utilisateur user)
@@ -66,7 +66,7 @@ public class BilletController extends HttpServlet {
 
         String idStr = req.getParameter("idBillet");
         if (idStr == null) {
-            resp.sendRedirect(req.getContextPath() + "/BilletController");
+            resp.sendRedirect(req.getContextPath() + "/billets");
             return;
         }
 
@@ -74,7 +74,7 @@ public class BilletController extends HttpServlet {
         try {
             billetId = Integer.parseInt(idStr);
         } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/BilletController");
+            resp.sendRedirect(req.getContextPath() + "/billets");
             return;
         }
 
@@ -82,7 +82,7 @@ public class BilletController extends HttpServlet {
         Evenement evenement = billetDAO.findEvenementByBilletId(billetId, user.getId());
 
         if (billet == null || evenement == null) {
-            resp.sendRedirect(req.getContextPath() + "/BilletController");
+            resp.sendRedirect(req.getContextPath() + "/billets");
             return;
         }
 

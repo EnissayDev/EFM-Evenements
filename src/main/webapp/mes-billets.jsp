@@ -17,9 +17,7 @@
         </div>
 
         <div class="bg-white border border-gray-200 rounded-xl p-3 mb-10 shadow-sm">
-            <form action="${pageContext.request.contextPath}/BilletController" method="GET" class="flex flex-col md:flex-row gap-2">
-                <input type="hidden" name="action" value="mesBillets">
-
+            <form action="${pageContext.request.contextPath}/billets" method="GET" class="flex flex-col md:flex-row gap-2">
                 <div class="flex-grow">
                     <input type="text" name="search" class="live-search w-full h-12 rounded-lg bg-gray-50 px-4 font-semibold text-gray-900 hover:bg-gray-100 outline-none focus:ring-2 focus:ring-primary-500 transition-colors" placeholder="Rechercher un événement..." value="${param.search}">
                 </div>
@@ -42,21 +40,21 @@
                 <div class="text-center py-20 border border-gray-200 rounded-xl bg-gray-50">
                     <h3 class="font-bold text-xl text-gray-900 mb-2">Aucun billet trouvé</h3>
                     <p class="text-gray-500 font-medium mb-6">Vous n'avez pas de billets correspondant à ces critères.</p>
-                    <a href="${pageContext.request.contextPath}/EvenementController?action=search" class="inline-flex items-center rounded-full justify-center whitespace-nowrap font-semibold h-11 px-6 text-white bg-primary-500 hover:bg-primary-300 transition-colors">
+                    <a href="${pageContext.request.contextPath}/catalogue" class="inline-flex items-center rounded-full justify-center whitespace-nowrap font-semibold h-11 px-6 text-white bg-primary-500 hover:bg-primary-300 transition-colors">
                         Découvrir des événements
                     </a>
                 </div>
             </c:if>
 
             <c:forEach var="billet" items="${billets}">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border ${billet.statut == 'VALIDE' ? 'border-gray-200' : 'border-gray-200 bg-gray-50 opacity-75'} rounded-xl transition-shadow hover:shadow-md relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 border ${billet.statut == 'ACTIF' ? 'border-gray-200' : 'border-gray-200 bg-gray-50 opacity-75'} rounded-xl transition-shadow hover:shadow-md relative overflow-hidden">
 
-                    <div class="absolute left-0 top-0 bottom-0 w-1 ${billet.statut == 'VALIDE' ? 'bg-primary-500' : 'bg-gray-300'}"></div>
+                    <div class="absolute left-0 top-0 bottom-0 w-1 ${billet.statut == 'ACTIF' ? 'bg-primary-500' : 'bg-gray-300'}"></div>
 
                     <div class="pl-3 flex-1 mb-4 md:mb-0">
                         <div class="mb-2">
                             <c:choose>
-                                <c:when test="${billet.statut == 'VALIDE'}">
+                                <c:when test="${billet.statut == 'ACTIF'}">
                                     <span class="text-xs font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-1 rounded">Valide</span>
                                 </c:when>
                                 <c:otherwise>
@@ -75,13 +73,9 @@
                     </div>
 
                     <div class="w-full md:w-auto pl-3 md:pl-0">
-                        <form action="${pageContext.request.contextPath}/BilletController" method="GET" class="m-0">
-                            <input type="hidden" name="action" value="viewQR">
-                            <input type="hidden" name="idBillet" value="${billet.id}">
-                            <button type="submit" class="w-full md:w-auto inline-flex items-center rounded-full justify-center font-semibold h-11 px-8 transition-colors ${billet.statut == 'VALIDE' ? 'text-white bg-primary-500 hover:bg-primary-300' : 'text-gray-900 bg-gray-200 hover:bg-gray-300'}">
-                                ${billet.statut == 'VALIDE' ? 'Voir le Billet' : 'Détails'}
-                            </button>
-                        </form>
+                        <a href="${pageContext.request.contextPath}/billets?action=viewQR&idBillet=${billet.id}" class="w-full md:w-auto inline-flex items-center rounded-full justify-center font-semibold h-11 px-8 transition-colors ${billet.statut == 'ACTIF' ? 'text-white bg-primary-500 hover:bg-primary-300' : 'text-gray-900 bg-gray-200 hover:bg-gray-300'}">
+                            ${billet.statut == 'ACTIF' ? 'Voir le Billet' : 'Détails'}
+                        </a>
                     </div>
                 </div>
             </c:forEach>

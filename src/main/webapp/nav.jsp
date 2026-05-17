@@ -51,10 +51,10 @@
                                     <li><a class="opacity-80 hover:opacity-100 text-primary-500" href="${pageContext.request.contextPath}/dashboard.jsp">Espace Organisateur</a></li>
                                 </c:when>
                                 <c:when test="${sessionScope.user.role == 'AGENT_CONTROLE'}">
-                                    <li><a class="opacity-80 hover:opacity-100 text-primary-500" href="${pageContext.request.contextPath}/scanner.jsp">Scanner d'Accès</a></li>
+                                    <li><a class="opacity-80 hover:opacity-100 text-primary-500" href="${pageContext.request.contextPath}/scanner">Scanner d'Accès</a></li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li><a class="opacity-80 hover:opacity-100 text-primary-500" href="${pageContext.request.contextPath}/BilletController?action=mesBillets">Mes Billets</a></li>
+                                    <li><a class="opacity-80 hover:opacity-100 text-primary-500" href="${pageContext.request.contextPath}/billets">Mes Billets</a></li>
                                 </c:otherwise>
                             </c:choose>
                         </ul>

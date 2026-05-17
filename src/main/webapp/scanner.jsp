@@ -4,187 +4,255 @@
 <head>
     <meta charset="UTF-8">
     <title>Contrôle d'Accès - EventTix</title>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 </head>
 <body class="flex min-h-screen flex-col text-gray-900 bg-gray-50">
     <jsp:include page="/nav.jsp" />
 
     <main class="flex-1 flex items-center justify-center p-5 py-12">
         <div class="w-full max-w-lg bg-white border border-gray-200 rounded-xl p-6 sm:p-10 shadow-sm">
+
             <h1 class="font-bold text-3xl text-gray-950 mb-2 text-center">Scanner de Billets</h1>
             <p class="text-gray-500 font-medium text-center mb-8">Vérifiez la validité des billets à l'entrée.</p>
 
             <div class="flex gap-2 mb-6 bg-gray-50 p-1 rounded-lg border border-gray-200">
-                <button id="btnCameraMode" class="flex-1 h-10 rounded-md font-bold text-sm transition-colors text-white bg-gray-900 shadow-sm">📹 Caméra</button>
-                <button id="btnManualMode" class="flex-1 h-10 rounded-md font-bold text-sm transition-colors text-gray-600 hover:text-gray-900 bg-transparent">⌨️ Saisie Manuelle</button>
+                <button id="btnCameraMode" class="flex-1 h-10 rounded-md font-bold text-sm transition-colors text-white bg-gray-900 shadow-sm">Caméra</button>
+                <button id="btnManualMode" class="flex-1 h-10 rounded-md font-bold text-sm transition-colors text-gray-500 hover:text-gray-900">Saisie Manuelle</button>
             </div>
 
-            <div id="cameraSection" class="w-full">
-                <div id="reader" class="w-full rounded-lg overflow-hidden border border-gray-200 bg-black"></div>
-                <p class="text-center text-sm text-gray-500 font-medium mt-4">Placez le QR Code dans le cadre.</p>
-            </div>
+            <div id="cameraSection">
+                <div id="reader" class="w-full rounded-lg overflow-hidden border border-gray-200"></div>
+                <div id="cameraError" class="hidden mt-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-semibold text-center"></div>
+                <p class="text-center text-sm text-gray-400 font-medium mt-3">Placez le QR Code dans le cadre.</p>
 
-            <div id="manualSection" class="hidden w-full flex-col gap-4">
-                <div>
-                    <label for="qrInput" class="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">Code du Billet</label>
-                    <input type="text" id="qrInput" placeholder="Saisir ou flasher le code..." autocomplete="off"
-                           class="w-full h-14 bg-gray-50 text-gray-900 text-center font-bold text-xl border border-gray-200 focus:border-primary-500 rounded-lg px-4 outline-none focus:ring-1 focus:ring-primary-500 transition-colors">
+                <div class="flex items-center gap-3 my-5">
+                    <div class="flex-1 h-px bg-gray-200"></div>
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide">ou</span>
+                    <div class="flex-1 h-px bg-gray-200"></div>
                 </div>
-                <button id="btnScanManual" class="w-full h-14 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide text-white bg-primary-500 hover:bg-primary-300 transition-colors">
+
+                <label for="photoInput" class="w-full h-12 inline-flex items-center justify-center gap-2 rounded-full font-bold text-sm uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors cursor-pointer">
+                    Scanner depuis une photo
+                </label>
+                <input type="file" id="photoInput" accept="image/*" class="hidden">
+            </div>
+
+            <div id="manualSection" class="hidden flex-col gap-4">
+                <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide">Code du Billet</label>
+                <input type="text" id="qrInput" placeholder="Saisir ou flasher le code..." autocomplete="off"
+                       class="w-full h-14 bg-gray-50 text-gray-900 text-center font-bold text-xl border border-gray-200 focus:border-gray-900 rounded-lg px-4 outline-none focus:ring-1 focus:ring-gray-900 transition-colors">
+                <button id="btnScanManual" class="w-full h-14 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide text-white bg-gray-900 hover:bg-gray-700 transition-colors">
                     Vérifier le Billet
                 </button>
             </div>
 
-            <div id="resultMessage" class="hidden mt-6 p-6 rounded-lg text-center font-bold text-xl border"></div>
+            <div id="resultMessage" class="hidden mt-6 p-6 rounded-xl text-center border"></div>
 
-            <button id="btnNext" class="hidden w-full h-14 mt-6 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide text-gray-900 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors">
+            <button id="btnNext" class="hidden w-full h-14 mt-4 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors">
                 Scanner le billet suivant
             </button>
+
         </div>
     </main>
 
     <script>
-        const APP_CONTEXT_PATH = '${pageContext.request.contextPath}';
+        const CTX = '${pageContext.request.contextPath}';
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const cameraSection = document.getElementById('cameraSection');
-            const manualSection = document.getElementById('manualSection');
-            const resultDiv = document.getElementById('resultMessage');
-            const btnNext = document.getElementById('btnNext');
-            const btnCameraMode = document.getElementById('btnCameraMode');
-            const btnManualMode = document.getElementById('btnManualMode');
+        const TAB_ACTIVE   = 'flex-1 h-10 rounded-md font-bold text-sm transition-colors text-white bg-gray-900 shadow-sm';
+        const TAB_INACTIVE = 'flex-1 h-10 rounded-md font-bold text-sm transition-colors text-gray-500 hover:text-gray-900';
 
-            let html5QrcodeScanner = null;
-            let isProcessing = false;
+        const cameraSection = document.getElementById('cameraSection');
+        const manualSection = document.getElementById('manualSection');
+        const resultDiv     = document.getElementById('resultMessage');
+        const btnNext       = document.getElementById('btnNext');
+        const btnCameraMode = document.getElementById('btnCameraMode');
+        const btnManualMode = document.getElementById('btnManualMode');
+        const cameraError   = document.getElementById('cameraError');
+        const qrInput       = document.getElementById('qrInput');
 
-            // Classes Tailwind pour les onglets Actif/Inactif
-            const activeTabClasses = "flex-1 h-10 rounded-md font-bold text-sm transition-colors text-white bg-gray-900 shadow-sm";
-            const inactiveTabClasses = "flex-1 h-10 rounded-md font-bold text-sm transition-colors text-gray-600 hover:text-gray-900 bg-transparent";
+        let html5QrCode     = null;
+        let cameraRunning   = false;
+        let processing      = false;
+        let currentMode     = 'camera';
+        let lastCode        = null;
+        let lastCodeTime    = 0;
 
-            // --- Basculer sur la Caméra ---
-            btnCameraMode.addEventListener('click', function() {
-                manualSection.style.display = 'none';
-                cameraSection.style.display = 'block';
-                this.className = activeTabClasses;
-                btnManualMode.className = inactiveTabClasses;
+        function showSection(section) {
+            cameraSection.style.display  = section === 'camera' ? 'block' : 'none';
+            manualSection.style.display  = section === 'manual' ? 'flex'  : 'none';
+            resultDiv.style.display      = 'none';
+            btnNext.style.display        = 'none';
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            btnCameraMode.className = mode === 'camera' ? TAB_ACTIVE : TAB_INACTIVE;
+            btnManualMode.className = mode === 'manual' ? TAB_ACTIVE : TAB_INACTIVE;
+
+            if (mode === 'camera') {
+                showSection('camera');
                 startCamera();
-            });
-
-            // --- Basculer sur la saisie manuelle ---
-            btnManualMode.addEventListener('click', function() {
-                cameraSection.style.display = 'none';
-                manualSection.style.display = 'flex';
-                this.className = activeTabClasses;
-                btnCameraMode.className = inactiveTabClasses;
+            } else {
                 stopCamera();
-                document.getElementById('qrInput').focus();
-            });
+                showSection('manual');
+                qrInput.focus();
+            }
+        }
 
-            // --- Fonction Principale de Validation ---
-            function validateTicket(code) {
-                if (isProcessing) return;
-                isProcessing = true;
+        function startCamera() {
+            cameraError.style.display = 'none';
 
-                // Mettre en pause la caméra pendant le traitement
-                try {
-                    if (html5QrcodeScanner) html5QrcodeScanner.pause();
-                } catch (e) { /* ignore */ }
+            if (cameraRunning) return;
 
-                fetch(APP_CONTEXT_PATH + '/validation', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    credentials: 'same-origin',
-                    body: 'qrCode=' + encodeURIComponent(code)
-                })
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode('reader');
+            }
+
+            Html5Qrcode.getCameras()
+                .then(function(cameras) {
+                    if (!cameras || cameras.length === 0) {
+                        showCameraError('Aucune caméra détectée sur cet appareil.');
+                        return;
                     }
-                    return response.json();
-                })
-                .then(function(data) {
-                    cameraSection.style.display = 'none';
-                    manualSection.style.display = 'none';
-                    resultDiv.style.display = 'block';
-                    btnNext.style.display = 'flex';
+                    // prefer back camera (last in list on mobile)
+                    const cam = cameras.find(function(c) {
+                        return /back|rear|environment/i.test(c.label);
+                    }) || cameras[cameras.length - 1];
 
-                    if (data.status === 'OK') {
-                        // Couleurs Tailwind Vertes
-                        resultDiv.className = "mt-6 p-6 rounded-lg text-center border bg-[#dcfce7] border-[#86efac] text-[#15803d]";
-                        resultDiv.innerHTML = '✅ ACCÈS VALIDÉ<br><span class="block mt-2 text-base font-semibold">Type de place : <span class="uppercase">' + (data.typePlace || 'Standard') + '</span></span>';
-                    } else {
-                        // Couleurs Tailwind Rouges
-                        resultDiv.className = "mt-6 p-6 rounded-lg text-center border bg-[#fee2e2] border-[#fca5a5] text-[#b91c1c]";
-                        resultDiv.innerHTML = '❌ ACCÈS REFUSÉ<br><span class="block mt-2 text-base font-semibold">Billet invalide ou déjà scanné.</span>';
-                    }
-                    document.getElementById('qrInput').value = '';
-                    isProcessing = false;
+                    return html5QrCode.start(
+                        cam.id,
+                        { fps: 10, qrbox: { width: 240, height: 240 } },
+                        function(decodedText) {
+                            const now = Date.now();
+                            if (decodedText === lastCode && now - lastCodeTime < 4000) return;
+                            lastCode     = decodedText;
+                            lastCodeTime = now;
+                            validateTicket(decodedText);
+                        },
+                        function() { /* frame errors ignored */ }
+                    ).then(function() {
+                        cameraRunning = true;
+                    });
                 })
-                .catch(function(error) {
-                    cameraSection.style.display = 'none';
-                    manualSection.style.display = 'none';
-                    resultDiv.style.display = 'block';
-                    btnNext.style.display = 'flex';
+                .catch(function() {
+                    showCameraError('Accès à la caméra refusé. Vérifiez les permissions du navigateur.');
+                });
+        }
 
-                    // Couleurs Tailwind Jaunes/Oranges
-                    resultDiv.className = "mt-6 p-6 rounded-lg text-center border bg-[#fef3c7] border-[#fde047] text-[#a16207]";
-                    resultDiv.innerHTML = '⚠️ ERREUR RÉSEAU<br><span class="block mt-2 text-base font-semibold">Impossible de contacter le serveur.</span>';
-                    isProcessing = false;
+        function stopCamera() {
+            if (html5QrCode && cameraRunning) {
+                html5QrCode.stop().catch(function() {}).finally(function() {
+                    cameraRunning = false;
                 });
             }
+        }
 
-            // --- Configuration de la Caméra ---
-            function startCamera() {
-                if (!html5QrcodeScanner) {
-                    html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
-                    html5QrcodeScanner.render((decodedText, decodedResult) => {
-                        validateTicket(decodedText);
-                    }, (error) => {
-                        // Ignore en silence les frames vides
-                    });
+        function showCameraError(msg) {
+            cameraError.textContent    = msg;
+            cameraError.style.display  = 'block';
+        }
+
+        function validateTicket(code) {
+            if (processing) return;
+            processing = true;
+
+            stopCamera();
+            cameraSection.style.display = 'none';
+            manualSection.style.display = 'none';
+
+            fetch(CTX + '/validation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                credentials: 'same-origin',
+                body: 'qrCode=' + encodeURIComponent(code)
+            })
+            .then(function(r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(function(data) {
+                qrInput.value = '';
+                if (data.status === 'OK') {
+                    resultDiv.className = 'mt-6 p-6 rounded-xl text-center border bg-green-50 border-green-200 text-green-700';
+                    resultDiv.innerHTML =
+                        '<div class="text-5xl mb-4">✓</div>' +
+                        '<div class="text-2xl font-black mb-2">ACCÈS VALIDÉ</div>' +
+                        '<div class="font-semibold text-base">Place : <span class="uppercase">' + (data.typePlace || 'Standard') + '</span></div>';
                 } else {
-                    html5QrcodeScanner.resume();
+                    resultDiv.className = 'mt-6 p-6 rounded-xl text-center border bg-red-50 border-red-200 text-red-700';
+                    resultDiv.innerHTML =
+                        '<div class="text-5xl mb-4">❌</div>' +
+                        '<div class="text-2xl font-black mb-2">ACCÈS REFUSÉ</div>' +
+                        '<div class="font-semibold text-base">Billet invalide ou déjà utilisé.</div>';
                 }
-            }
-
-            function stopCamera() {
-                if (html5QrcodeScanner) { html5QrcodeScanner.pause(); }
-            }
-
-            // --- Déclenchement Manuel ---
-            document.getElementById('btnScanManual').addEventListener('click', function() {
-                const qrCodeValue = document.getElementById('qrInput').value;
-                if (qrCodeValue) validateTicket(qrCodeValue);
+            })
+            .catch(function() {
+                resultDiv.className = 'mt-6 p-6 rounded-xl text-center border bg-yellow-50 border-yellow-200 text-yellow-700';
+                resultDiv.innerHTML =
+                    '<div class="text-5xl mb-4">⚠️</div>' +
+                    '<div class="text-2xl font-black mb-2">ERREUR RÉSEAU</div>' +
+                    '<div class="font-semibold text-base">Impossible de contacter le serveur.</div>';
+            })
+            .finally(function() {
+                processing              = false;
+                resultDiv.style.display = 'block';
+                btnNext.style.display   = 'flex';
             });
+        }
 
-            document.getElementById('qrInput').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    document.getElementById('btnScanManual').click();
-                }
-            });
-
-            // --- Bouton "Scanner le billet suivant" ---
-            btnNext.addEventListener('click', function() {
-                isProcessing = false;
-                resultDiv.style.display = 'none';
-                btnNext.style.display = 'none';
-
-                // Vérifier quel mode est actif en regardant les classes du bouton Caméra
-                if (btnCameraMode.className.includes('bg-gray-900')) {
-                    cameraSection.style.display = 'block';
-                    html5QrcodeScanner.resume();
-                } else {
-                    manualSection.style.display = 'flex';
-                    document.getElementById('qrInput').focus();
-                }
-            });
-
-            // Démarrer la caméra par défaut au chargement
-            startCamera();
+        document.getElementById('btnScanManual').addEventListener('click', function() {
+            var code = qrInput.value.trim();
+            if (code) validateTicket(code);
         });
+
+        qrInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var code = qrInput.value.trim();
+                if (code) validateTicket(code);
+            }
+        });
+
+        btnNext.addEventListener('click', function() {
+            switchMode(currentMode);
+        });
+
+        btnCameraMode.addEventListener('click', function() { switchMode('camera'); });
+        btnManualMode.addEventListener('click', function() { switchMode('manual'); });
+
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode('reader');
+            }
+
+            var doScan = function() {
+                html5QrCode.scanFile(file, true)
+                    .then(function(decodedText) {
+                        validateTicket(decodedText);
+                    })
+                    .catch(function() {
+                        showCameraError('Impossible de lire le QR Code dans cette image.');
+                    });
+            };
+
+            if (cameraRunning) {
+                html5QrCode.stop()
+                    .catch(function() {})
+                    .finally(function() {
+                        cameraRunning = false;
+                        doScan();
+                    });
+            } else {
+                doScan();
+            }
+        });
+
+        // start camera on load
+        switchMode('camera');
     </script>
 </body>
 </html>

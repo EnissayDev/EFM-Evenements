@@ -70,7 +70,7 @@
             <button onclick="window.print()" class="flex-1 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide h-14 text-white bg-primary-500 hover:bg-[#C1122B] transition-colors">
                 🖨️ Imprimer
             </button>
-            <a href="${pageContext.request.contextPath}/BilletController?action=mesBillets" class="flex-1 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide h-14 text-gray-900 bg-gray-200 hover:bg-gray-300 transition-colors text-center">
+            <a href="${pageContext.request.contextPath}/billets" class="flex-1 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide h-14 text-gray-900 bg-gray-200 hover:bg-gray-300 transition-colors text-center">
                 Mes billets
             </a>
         </div>
