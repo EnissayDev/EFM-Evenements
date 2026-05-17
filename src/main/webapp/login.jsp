@@ -11,12 +11,13 @@
     </style>
 </head>
 <body>
-<jsp:include page="/nav.jsp" />
+    <jsp:include page="/nav.jsp" />
 
     <div class="container login-wrapper">
         <div class="card login-card">
             <h2 style="margin-top: 0; font-size: 28px;">Connectez-vous</h2>
-            <form action="${pageContext.request.contextPath}/login" method="POST">
+
+            <form action="${pageContext.request.contextPath}/AuthController" method="POST">
                 <div class="form-group">
                     <label for="email">Adresse e-mail</label>
                     <input type="email" id="email" name="email" required>
@@ -27,7 +28,16 @@
                 </div>
                 <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Se connecter</button>
             </form>
+
             <p style="color: red; margin-top: 15px; text-align: center;">${erreurMessage}</p>
+
+            <div style="text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <p style="margin: 0; color: var(--text-muted);">
+                    Pas encore de compte ? <br>
+                    <a href="${pageContext.request.contextPath}/register.jsp" style="font-weight: bold; color: var(--primary-orange);">S'inscrire gratuitement</a>
+                </p>
+            </div>
+
         </div>
     </div>
 </body>

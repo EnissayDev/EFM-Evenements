@@ -30,7 +30,7 @@
     <div class="container">
         <h1 style="margin-top: 40px; font-size: 36px;">Trouvez votre prochain événement</h1>
 
-        <form action="${pageContext.request.contextPath}/catalogue" method="GET" class="search-bar-container">
+        <form action="${pageContext.request.contextPath}/EvenementController" method="GET" class="search-bar-container">
             <input type="hidden" name="action" value="search">
 
             <div class="search-input form-group" style="margin-bottom: 0;">
@@ -52,8 +52,11 @@
 
         <div class="event-grid">
             <c:if test="${empty evenements}">
-                <p>Aucun événement ne correspond à votre recherche.</p>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--white); border-radius: 8px;">
+                    <p style="color: var(--text-muted); font-size: 18px;">Aucun événement ne correspond à votre recherche.</p>
+                </div>
             </c:if>
+
             <c:forEach var="evenement" items="${evenements}">
                 <div class="card">
                     <div class="card-image" style="background-image: url('${not empty evenement.imagePath ? pageContext.request.contextPath.concat('/').concat(evenement.imagePath) : 'https://via.placeholder.com/400x200'}'); background-size: cover; background-position: center;"></div>
@@ -62,12 +65,18 @@
                         <h3 class="card-title">${evenement.titre}</h3>
                         <div class="card-location">${evenement.lieu}</div>
                         <div class="card-footer">
-                            <a href="${pageContext.request.contextPath}/evenements/${evenement.id}" class="btn" style="display: block; box-sizing: border-box; text-align: center;">Réserver</a>
+                            <form action="${pageContext.request.contextPath}/EvenementController" method="GET" style="margin:0;">
+                                <input type="hidden" name="action" value="details">
+                                <input type="hidden" name="id" value="${evenement.id}">
+                                <button type="submit" class="btn" style="width: 100%;">Réserver</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </c:forEach>
         </div>
     </div>
+
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>
