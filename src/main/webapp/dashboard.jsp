@@ -145,7 +145,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-gray-100 pb-4 gap-4">
                 <h2 class="font-bold text-2xl text-gray-900">Mes Événements Actifs</h2>
 
-                <form action="${pageContext.request.contextPath}/dashboard.jsp" method="GET" class="flex w-full md:w-auto gap-2">
+                <form action="${pageContext.request.contextPath}/dashboard" method="GET" class="flex w-full md:w-auto gap-2">
                     <input type="text" name="searchEvent" class="live-search h-11 w-full md:w-64 rounded-sm bg-gray-50 px-4 text-sm font-medium text-gray-900 border border-gray-200 focus:border-primary-500 outline-none" placeholder="Rechercher un événement..." value="${param.searchEvent}">
 
                     <select name="sortEvent" onchange="this.form.submit()" class="h-11 rounded-sm bg-gray-50 px-4 text-sm font-bold text-gray-900 border border-gray-200 focus:border-primary-500 outline-none appearance-none cursor-pointer">

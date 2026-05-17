@@ -82,17 +82,22 @@ public class EvenementController extends HttpServlet {
     private void handleCatalogue(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String keyword = req.getParameter("keyword");
+        String keyword  = req.getParameter("keyword");
         String category = req.getParameter("category");
+        String lieu     = req.getParameter("lieu");
 
         List<Evenement> evenements;
-        if ((keyword != null && !keyword.isBlank()) || (category != null && !category.isBlank())) {
-            evenements = evenementDAO.rechercher(keyword, category);
+        if ((keyword != null && !keyword.isBlank())
+                || (category != null && !category.isBlank())
+                || (lieu != null && !lieu.isBlank())) {
+            evenements = evenementDAO.rechercher(keyword, category, lieu);
         } else {
             evenements = evenementDAO.findAll();
         }
 
         req.setAttribute("evenements", evenements);
+        req.setAttribute("villesExistantes", evenementDAO.getVillesDistinctes());
+        req.setAttribute("categoriesExistantes", evenementDAO.getCategoriesDistinctes());
         req.getRequestDispatcher("/catalogue.jsp").forward(req, resp);
     }
 
@@ -140,8 +145,18 @@ public class EvenementController extends HttpServlet {
             req.setAttribute("successMessage", "Événement publié avec succès !");
         }
 
+        String searchEvent = req.getParameter("searchEvent");
+        String sortEvent   = req.getParameter("sortEvent");
+
+        List<Evenement> mesEvenements = evenementDAO.findByOrganisateur(organisateur.getId(), searchEvent, sortEvent);
+        req.setAttribute("mesEvenements", mesEvenements);
+
         List<Commande> commandes = commandeDAO.findByOrganisateur(organisateur.getId());
         req.setAttribute("commandes", commandes);
+
+        req.setAttribute("villesExistantes", evenementDAO.getVillesDistinctes());
+        req.setAttribute("categoriesExistantes", evenementDAO.getCategoriesDistinctes());
+
         req.getRequestDispatcher("/dashboard.jsp").forward(req, resp);
     }
 
@@ -156,7 +171,13 @@ public class EvenementController extends HttpServlet {
         String dateStr     = req.getParameter("date");
         String capStr      = req.getParameter("capacite");
         String lieu        = req.getParameter("lieu");
+        if ("Autre".equals(lieu)) {
+            lieu = req.getParameter("customLieu");
+        }
         String categorie   = req.getParameter("categorie");
+        if ("Autre".equals(categorie)) {
+            categorie = req.getParameter("customCategorie");
+        }
         String prixStdStr  = req.getParameter("prixStandard");
         String prixVipStr  = req.getParameter("prixVip");
 

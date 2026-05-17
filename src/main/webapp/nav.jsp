@@ -29,8 +29,8 @@
                 <div class="font-semibold hidden lg:block">
                     <ul class="flex items-center justify-center gap-6">
                         <c:if test="${empty sessionScope.user or sessionScope.user.role != 'AGENT_CONTROLE'}">
-                            <li><a class="opacity-80 hover:opacity-100 transition-opacity" href="${pageContext.request.contextPath}/index.jsp">Accueil</a></li>
-                            <li><a class="opacity-80 hover:opacity-100 transition-opacity" href="${pageContext.request.contextPath}/EvenementController?action=search">Catalogue</a></li>
+                            <li><a class="opacity-80 hover:opacity-100 transition-opacity" href="${pageContext.request.contextPath}/">Accueil</a></li>
+                            <li><a class="opacity-80 hover:opacity-100 transition-opacity" href="${pageContext.request.contextPath}/catalogue">Catalogue</a></li>
                         </c:if>
                     </ul>
                 </div>

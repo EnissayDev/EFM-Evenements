@@ -22,8 +22,7 @@
                     </p>
 
                     <div class="w-full max-w-4xl relative mx-auto flex flex-col gap-2 rounded-3xl md:rounded-full bg-white p-2 shadow-lg md:flex-row">
-                        <form action="${pageContext.request.contextPath}/EvenementController" method="GET" class="flex flex-col md:flex-row w-full gap-2">
-                            <input type="hidden" name="action" value="search">
+                        <form action="${pageContext.request.contextPath}/catalogue" method="GET" class="flex flex-col md:flex-row w-full gap-2">
 
                             <input type="text" name="keyword" class="live-search flex h-12 md:h-14 w-full flex-1 cursor-text items-center truncate whitespace-nowrap rounded-full bg-gray-50 px-6 font-semibold text-gray-900 hover:bg-gray-100 outline-none focus:ring-2 focus:ring-primary-500" placeholder="Artiste, équipe ou événement..." value="${param.keyword}">
 
@@ -74,9 +73,11 @@
                 </c:if>
 
                 <c:forEach var="evenement" items="${evenements}">
-                    <a class="group flex gap-2 text-left flex-col lg:gap-4" href="${pageContext.request.contextPath}/EvenementController?action=details&id=${evenement.id}">
-                        <div class="relative aspect-video w-full flex-none overflow-clip rounded-lg bg-gray-100">
-                            <img alt="${evenement.titre}" loading="lazy" class="max-w-full transform-cpu transition duration-300 ease-in-out size-full object-cover group-hover:scale-110" src="${not empty evenement.imagePath ? pageContext.request.contextPath.concat('/').concat(evenement.imagePath) : 'https://images.unsplash.com/photo-1540039155732-d68a916abda3?auto=format&fit=crop&q=80&w=600'}">
+                    <a class="group flex gap-2 text-left flex-col lg:gap-4" href="${pageContext.request.contextPath}/evenements/${evenement.id}">
+                        <div class="relative aspect-video w-full flex-none overflow-clip rounded-lg bg-gray-300">
+                            <c:if test="${not empty evenement.imagePath}">
+                                <img alt="${evenement.titre}" loading="lazy" class="max-w-full transform-cpu transition duration-300 ease-in-out size-full object-cover group-hover:scale-110" src="${pageContext.request.contextPath}${evenement.imagePath}">
+                            </c:if>
                         </div>
 
                         <div class="flex flex-1 flex-col justify-start gap-1">

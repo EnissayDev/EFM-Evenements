@@ -44,4 +44,6 @@ public class Evenement {
 
     @Column("image_path")
     private String imagePath;
+
+    private int billetsVendus;
 }

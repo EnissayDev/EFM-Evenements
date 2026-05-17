@@ -140,6 +140,24 @@ public class BilletDAO extends JdbcDao<Billet, Integer> {
         return null;
     }
 
+    public String getTypePlaceByCode(String code) {
+        String sql = "SELECT CASE WHEN ABS((c.montant_total / c.quantite) - e.prix_vip) < 0.01 THEN 'VIP' ELSE 'Standard' END AS type_place "
+                   + "FROM billet b "
+                   + "JOIN commande c ON c.id = b.commande_id "
+                   + "JOIN evenement e ON e.id = c.evenement_id "
+                   + "WHERE b.code = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString("type_place");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching type place for billet " + code, e);
+        }
+        return "Standard";
+    }
+
     public void valider(int id) {
         String sql = "UPDATE billet SET statut = 'VALIDE' WHERE id = ?";
         try (Connection con = DBConnection.getConnection();

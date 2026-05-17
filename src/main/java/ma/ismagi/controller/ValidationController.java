@@ -51,7 +51,8 @@ public class ValidationController extends HttpServlet {
             return;
         }
 
+        String typePlace = billetDAO.getTypePlaceByCode(code.trim());
         billetDAO.valider(billet.getId());
-        resp.getWriter().write("{\"status\":\"OK\"}");
+        resp.getWriter().write("{\"status\":\"OK\",\"typePlace\":\"" + typePlace + "\"}");
     }
 }
