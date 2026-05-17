@@ -1,85 +1,131 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <title>${evenement.titre} - EventTix</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-    <style>
-        .hero-banner { width: 100%; height: 350px; background-color: #e2e2e6; background-image: url('${not empty evenement.imagePath ? pageContext.request.contextPath += evenement.imagePath : 'https://via.placeholder.com/1200x400'}'); background-size: cover; background-position: center; margin-bottom: 40px; }
-        .event-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
-        @media (max-width: 768px) { .event-layout { grid-template-columns: 1fr; } }
-    </style>
 </head>
-<body>
-<jsp:include page="/nav.jsp" />
+<body class="flex min-h-screen flex-col text-gray-900 bg-white">
+    <jsp:include page="/nav.jsp" />
 
-    <div class="hero-banner"></div>
+    <main class="flex-1 w-full pb-16">
 
-    <div class="container event-layout">
-        <div>
-            <h1 style="font-size: 40px; margin-top: 0;">${evenement.titre}</h1>
-            <h3 style="color: var(--primary-orange);">${evenement.date}</h3>
-            <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 8px;">📍 ${evenement.lieu}</p>
-            <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 30px;">🎟️ Capacité : ${billetsSold}/${evenement.capacite} places</p>
-            <h2>À propos de cet événement</h2>
-            <p style="font-size: 16px; line-height: 1.6;">${evenement.description}</p>
+        <div class="w-full h-64 md:h-96 bg-gray-200 bg-cover bg-center border-b border-gray-200"
+             style="background-image: url('${not empty evenement.imagePath ? pageContext.request.contextPath.concat('/').concat(evenement.imagePath) : 'https://images.unsplash.com/photo-1540039155732-d68a916abda3?auto=format&fit=crop&q=80&w=1600'}');">
+        </div>
 
-            <c:if test="${not empty mesBillets}">
-                <h2 style="margin-top: 40px;">Mes Billets</h2>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <c:forEach var="billet" items="${mesBillets}">
-                        <div style="display: flex; align-items: center; justify-content: space-between;
-                                    border: 1px solid var(--border-color); border-radius: 10px;
-                                    padding: 14px 18px; background: var(--bg-light);">
-                            <div>
-                                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Code du billet</div>
-                                <code style="font-size: 15px; font-weight: 600; letter-spacing: 0.5px;">${billet.code}</code>
-                            </div>
-                            <c:choose>
-                                <c:when test="${billet.statut == 'VALIDE'}">
-                                    <span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:600;">Utilisé</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span style="background:#e0f2fe; color:#0284c7; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:600;">Actif</span>
-                                </c:otherwise>
-                            </c:choose>
+        <div class="max-w-7xl mx-auto px-5 pt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+            <div class="lg:col-span-2 flex flex-col gap-8">
+                <div>
+                    <span class="inline-block bg-gray-900 text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-sm mb-4">
+                        ${evenement.categorie}
+                    </span>
+
+                    <h1 class="font-bold text-4xl md:text-5xl text-gray-950 mb-6 leading-tight">
+                        ${evenement.titre}
+                    </h1>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 text-gray-700 font-medium mb-8 p-4 bg-gray-50 border border-gray-200 rounded-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📅</span>
+                            <span class="font-bold text-primary-500">${evenement.date}</span>
                         </div>
-                    </c:forEach>
+                        <span class="hidden sm:block text-gray-300">|</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📍</span>
+                            <span>${evenement.lieu}</span>
+                        </div>
+                        <span class="hidden sm:block text-gray-300">|</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">🎟️</span>
+                            <span>${billetsSold} / ${evenement.capacite} places</span>
+                        </div>
+                    </div>
+
+                    <h2 class="font-bold text-2xl text-gray-900 mb-4 border-b border-gray-200 pb-2">À propos de cet événement</h2>
+                    <p class="text-gray-600 leading-relaxed whitespace-pre-wrap text-lg">${evenement.description}</p>
                 </div>
-            </c:if>
-        </div>
-        <div>
-            <div class="card" style="position: sticky; top: 100px;">
-                <h3 style="margin-top: 0;">Billetterie</h3>
-                <c:choose>
-                    <c:when test="${billetsSold >= evenement.capacite}">
-                        <p style="color: red; font-weight: bold; text-align: center;">Cet événement est complet.</p>
-                    </c:when>
-                    <c:otherwise>
-                        <c:if test="${param.error == 'complet'}">
-                            <p style="color: red; margin-bottom: 12px;">La quantité demandée dépasse la capacité restante.</p>
-                        </c:if>
-                        <form action="${pageContext.request.contextPath}/paiement" method="GET">
-                            <input type="hidden" name="idEvenement" value="${evenement.id}">
-                            <div class="form-group">
-                                <label for="typePlace">Type de Billet</label>
-                                <select id="typePlace" name="typePlace">
-                                    <option value="standard">Standard (${evenement.prixStandard} MAD)</option>
-                                    <option value="vip">VIP (${evenement.prixVip} MAD)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="quantite">Quantité</label>
-                                <input type="number" id="quantite" name="quantite" value="1" min="1" max="${evenement.capacite - billetsSold}" required>
-                            </div>
-                            <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Acheter des billets</button>
-                        </form>
-                    </c:otherwise>
-                </c:choose>
+
+                <c:if test="${not empty mesBillets}">
+                    <div class="mt-8">
+                        <h2 class="font-bold text-2xl text-gray-900 mb-6 border-b border-gray-200 pb-2">Mes Billets pour cet événement</h2>
+                        <div class="flex flex-col gap-3">
+                            <c:forEach var="billet" items="${mesBillets}">
+                                <div class="flex items-center justify-between border border-gray-200 p-4 rounded-sm bg-white shadow-sm hover:border-primary-500 transition-colors">
+                                    <div>
+                                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Code du billet</div>
+                                        <code class="text-lg font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded-sm">${billet.code}</code>
+                                    </div>
+                                    <c:choose>
+                                        <c:when test="${billet.statut == 'VALIDE'}">
+                                            <span class="bg-green-100 text-green-800 border border-green-200 px-3 py-1 text-xs font-bold uppercase rounded-sm">Actif</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="bg-gray-100 text-gray-600 border border-gray-200 px-3 py-1 text-xs font-bold uppercase rounded-sm">Utilisé</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </c:if>
             </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white border border-gray-200 rounded-sm p-6 shadow-sm sticky top-24">
+                    <h3 class="font-bold text-xl text-gray-900 mb-6 uppercase tracking-wide border-b border-gray-200 pb-2">Billetterie</h3>
+
+                    <c:choose>
+                        <c:when test="${billetsSold >= evenement.capacite}">
+                            <div class="bg-red-50 border border-red-200 text-red-700 font-bold p-4 text-center rounded-sm uppercase tracking-wide">
+                                Cet événement est complet.
+                            </div>
+                        </c:when>
+
+                        <c:otherwise>
+                            <c:if test="${param.error == 'complet'}">
+                                <div class="bg-red-50 border border-red-200 p-3 mb-6 rounded-sm">
+                                    <p class="text-red-700 font-bold text-sm text-center">La quantité demandée dépasse la capacité restante.</p>
+                                </div>
+                            </c:if>
+
+                            <form action="${pageContext.request.contextPath}/paiement" method="GET" class="flex flex-col gap-5">
+                                <input type="hidden" name="idEvenement" value="${evenement.id}">
+
+                                <div>
+                                    <label for="typePlace" class="block text-sm font-bold text-gray-900 mb-2 uppercase">Type de Billet</label>
+                                    <select id="typePlace" name="typePlace" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-sm focus:border-primary-500 outline-none appearance-none font-semibold text-gray-900 cursor-pointer">
+                                        <option value="standard">Standard - ${evenement.prixStandard} MAD</option>
+                                        <option value="vip">VIP - ${evenement.prixVip} MAD</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="quantite" class="block text-sm font-bold text-gray-900 mb-2 uppercase">Quantité</label>
+                                    <input type="number" id="quantite" name="quantite" value="1" min="1" max="${evenement.capacite - billetsSold}" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-sm focus:border-primary-500 outline-none font-bold text-gray-900 text-lg" required>
+                                </div>
+
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.user}">
+                                        <button type="submit" class="w-full mt-2 bg-primary-500 hover:bg-[#C1122B] text-white font-bold uppercase tracking-widest py-4 rounded-sm transition-colors text-sm">
+                                            Acheter des billets
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${pageContext.request.contextPath}/login.jsp" class="w-full mt-2 inline-flex justify-center items-center bg-gray-900 hover:bg-gray-800 text-white font-bold uppercase tracking-widest py-4 rounded-sm transition-colors text-sm text-center">
+                                            Connectez-vous pour acheter
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </form>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </main>
 </body>
 </html>

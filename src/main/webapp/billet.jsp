@@ -1,75 +1,95 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <title>Votre Billet - EventTix</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        .ticket-wrapper { display: flex; justify-content: center; margin-top: 40px; }
-        .ticket {
-            background: var(--white);
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .qr-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: var(--white);
+        @media print {
+            body { background-color: #fff !important; }
+            header, nav, .no-print { display: none !important; }
+            main { padding: 0 !important; margin: 0 !important; justify-content: flex-start !important; }
+            .ticket-card { box-shadow: none !important; border: 2px solid #000 !important; margin-top: 20px; }
         }
     </style>
 </head>
-<body>
+<body class="flex min-h-screen flex-col text-gray-900 bg-gray-50">
     <jsp:include page="/nav.jsp" />
 
-    <div class="container ticket-wrapper">
-        <div class="ticket">
-            <h2 style="color: var(--primary-orange); margin-top: 0;">Billet Confirmé !</h2>
-            <p><strong>Événement :</strong> ${evenement.titre}</p>
-            <p><strong>Lieu :</strong> ${evenement.lieu}</p>
-            <p><strong>Date :</strong> ${evenement.date}</p>
-            <p><strong>Participant :</strong> ${sessionScope.user.prenom} ${sessionScope.user.nom}</p>
+    <main class="flex-1 flex flex-col items-center justify-center p-5 py-12">
 
-            <hr style="border: none; border-top: 1px dashed #ccc; margin: 20px 0;">
+        <div class="ticket-card w-full max-w-md bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg flex flex-col">
 
-            <p style="font-size: 14px; color: var(--text-muted);">Présentez ce QR Code à l'entrée</p>
+            <div class="bg-gray-950 text-white p-6 text-center">
+                <h2 class="font-bold text-2xl tracking-widest uppercase mb-1">Billet Confirmé</h2>
+                <p class="text-gray-400 text-sm font-medium">Votre accès est garanti</p>
+            </div>
 
-            <div id="qrcode" class="qr-container"></div>
+            <div class="p-6 pb-8 bg-white flex flex-col gap-5 border-b-2 border-dashed border-gray-200 relative">
 
-            <p style="font-family: monospace; font-size: 16px; font-weight: bold; letter-spacing: 2px;">
-                ${billet.code}
-            </p>
+                <div class="absolute -bottom-3 -left-3 w-6 h-6 bg-gray-50 rounded-full border-t border-r border-gray-200 z-10 hidden sm:block"></div>
+                <div class="absolute -bottom-3 -right-3 w-6 h-6 bg-gray-50 rounded-full border-t border-l border-gray-200 z-10 hidden sm:block"></div>
 
-            <button onclick="window.print()" class="btn btn-outline" style="width: 100%; margin-top: 15px;">Imprimer le billet</button>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Événement</p>
+                    <h3 class="font-bold text-xl text-gray-900 leading-tight">${evenement.titre}</h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Date</p>
+                        <p class="font-semibold text-gray-900">${evenement.date}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Lieu</p>
+                        <p class="font-semibold text-gray-900">${evenement.lieu}</p>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Participant</p>
+                    <p class="font-semibold text-gray-900 uppercase">${sessionScope.user.prenom} ${sessionScope.user.nom}</p>
+                </div>
+            </div>
+
+            <div class="p-8 bg-white flex flex-col items-center justify-center">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Présentez ce code à l'entrée</p>
+
+                <div id="qrcode" class="p-3 bg-white border border-gray-200 rounded-xl shadow-sm mb-6 flex justify-center items-center"></div>
+
+                <p class="font-mono text-lg font-bold tracking-widest text-gray-900 bg-gray-100 px-6 py-2 rounded-md">
+                    ${billet.code}
+                </p>
+            </div>
         </div>
-    </div>
+
+        <div class="w-full max-w-md mt-6 flex flex-col sm:flex-row gap-3 no-print">
+            <button onclick="window.print()" class="flex-1 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide h-14 text-white bg-primary-500 hover:bg-[#C1122B] transition-colors">
+                🖨️ Imprimer
+            </button>
+            <a href="${pageContext.request.contextPath}/BilletController?action=mesBillets" class="flex-1 inline-flex items-center justify-center rounded-full font-bold uppercase tracking-wide h-14 text-gray-900 bg-gray-200 hover:bg-gray-300 transition-colors text-center">
+                Mes billets
+            </a>
+        </div>
+
+    </main>
 
     <script>
-        // Dès que la page charge, on génère le QR Code
         document.addEventListener("DOMContentLoaded", function() {
-            // On récupère le code généré par le backend (ex: "TICKET-12345-XYZ")
-            // S'il est vide (test local), on met un code par défaut
             var codeBillet = "${billet.code}";
             if (!codeBillet) {
-                codeBillet = "Erreur";
+                codeBillet = "CODE-TEST-INVALIDE";
             }
 
-            // Génération magique du QR Code
+            // Génération du QR Code
             new QRCode(document.getElementById("qrcode"), {
                 text: codeBillet,
-                width: 200,
-                height: 200,
-                colorDark : "#1e0a3c", // La couleur bleue foncée de votre charte graphique
+                width: 220,
+                height: 220,
+                colorDark : "#111111", // Utilisation du noir Tickets.ca (remplace l'ancien bleu foncé)
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
