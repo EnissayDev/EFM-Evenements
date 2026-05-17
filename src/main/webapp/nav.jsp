@@ -28,7 +28,7 @@
                             <a href="${pageContext.request.contextPath}/scanner.jsp" style="color: var(--primary-orange); font-weight: bold; text-decoration: none;">📷 Scanner de Billets</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="#" style="color: var(--text-dark); font-weight: bold; text-decoration: none;">🎟️ Mes Billets</a>
+                            <a href="${pageContext.request.contextPath}/BilletController?action=mesBillets" style="color: var(--text-dark); font-weight: bold; text-decoration: none;">🎟️ Mes Billets</a>
                         </c:otherwise>
                     </c:choose>
 
