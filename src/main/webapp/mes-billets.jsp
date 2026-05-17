@@ -44,7 +44,7 @@
             margin-bottom: 10px;
         }
         .status-actif { background-color: #dcfce7; color: #15803d; }
-        .status-inactif { background-color: #f3f4f6; color: #6b7280; } /* Consommé ou expiré */
+        .status-inactif { background-color: #f3f4f6; color: #6b7280; }
 
         @media (max-width: 768px) {
             .filter-bar { flex-direction: column; }
@@ -64,11 +64,11 @@
             <input type="hidden" name="action" value="mesBillets">
 
             <div class="form-group" style="margin-bottom: 0; flex-grow: 2;">
-                <input type="text" name="search" placeholder="Rechercher par nom d'événement..." value="${param.search}">
+                <input type="text" name="search" class="live-search" placeholder="Rechercher par nom d'événement..." value="${param.search}">
             </div>
 
             <div class="form-group" style="margin-bottom: 0; flex-grow: 1;">
-                <select name="filter" style="width: 100%; padding: 12px; border: 1px solid #c8c6c4; border-radius: 4px; font-size: 16px;">
+                <select name="filter" onchange="this.form.submit()" style="width: 100%; padding: 12px; border: 1px solid #c8c6c4; border-radius: 4px; font-size: 16px;">
                     <option value="newest" ${param.filter == 'newest' ? 'selected' : ''}>Achats les plus récents</option>
                     <option value="oldest" ${param.filter == 'oldest' ? 'selected' : ''}>Achats les plus anciens</option>
                     <option value="soon" ${param.filter == 'soon' ? 'selected' : ''}>Événements à venir (Bientôt)</option>
