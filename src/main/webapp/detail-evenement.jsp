@@ -7,7 +7,7 @@
     <title>${evenement.titre} - EventTix</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <style>
-        .hero-banner { width: 100%; height: 350px; background-color: #e2e2e6; background-image: url('https://via.placeholder.com/1200x400'); background-size: cover; background-position: center; margin-bottom: 40px; }
+        .hero-banner { width: 100%; height: 350px; background-color: #e2e2e6; background-image: url('${not empty evenement.imagePath ? pageContext.request.contextPath += evenement.imagePath : 'https://via.placeholder.com/1200x400'}'); background-size: cover; background-position: center; margin-bottom: 40px; }
         .event-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; }
         @media (max-width: 768px) { .event-layout { grid-template-columns: 1fr; } }
     </style>

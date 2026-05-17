@@ -56,7 +56,7 @@
             </c:if>
             <c:forEach var="evenement" items="${evenements}">
                 <div class="card">
-                    <div class="card-image" style="background-image: url('https://via.placeholder.com/400x200'); background-size: cover;"></div>
+                    <div class="card-image" style="background-image: url('${not empty evenement.imagePath ? pageContext.request.contextPath += evenement.imagePath : 'https://via.placeholder.com/400x200'}'); background-size: cover; background-position: center;"></div>
                     <div class="card-content">
                         <div class="card-date">${evenement.date}</div>
                         <h3 class="card-title">${evenement.titre}</h3>
